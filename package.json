@@ -1,0 +1,28 @@
+{
+  "name": "disposable-domains",
+  "version": "1.0.0",
+  "description": "Aggregator for disposable email domain lists",
+  "author": "Shrinath Nayak",
+  "license": "MIT",
+  "keywords": [
+    "disposable-email",
+    "blocklist",
+    "spam",
+    "email-validation",
+    "throwaway-email"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "tsc",
+    "generate": "tsx src/generate.ts",
+    "generate:prod": "tsc && node dist/generate.js",
+    "test": "tsx --test test/utils.test.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^25.5.2",
+    "tsx": "^4.21.0",
+    "typescript": "^6.0.2"
+  }
+}
