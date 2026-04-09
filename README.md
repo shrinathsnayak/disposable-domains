@@ -1,6 +1,6 @@
 # disposable-domains
 
-A single, always-current list of **disposable email domains** - aggregated from 12 community sources, deduplicated, and published as `domains.json` every day.
+A single, always-current list of **disposable email domains** - aggregated from 22 community sources, deduplicated, and published as `domains.json` every day.
 
 ---
 
@@ -8,7 +8,7 @@ A single, always-current list of **disposable email domains** - aggregated from 
 
 Every day at **02:00 UTC**, a GitHub Actions workflow:
 
-1. Fetches all 12 upstream blocklists **in parallel**
+1. Fetches all 22 upstream blocklists **in parallel**
 2. Merges and **deduplicates** across all sources using a `Set`
 3. Filters out legitimate providers via an **allowlist** (so real domains are never blocked)
 4. Writes a single sorted `domains.json` with stats and a flat domain array
@@ -24,8 +24,8 @@ You can also trigger a manual regeneration any time via `workflow_dispatch`.
 {
   "meta": {
     "generated_at": "2026-04-10T02:00:00.000Z",
-    "total": 196394,
-    "source_count": 12,
+    "total": 205489,
+    "source_count": 22,
     "sources": [
       {
         "name": "ivolo/disposable-email-domains",
@@ -101,6 +101,16 @@ curl -s https://raw.githubusercontent.com/shrinathsnayak/disposable-domains/main
 | [amieiro/disposable-email-domains](https://github.com/amieiro/disposable-email-domains) | lines |
 | [stopforumspam/toxic_domains](https://www.stopforumspam.com) | lines |
 | [MattKetmo/EmailChecker](https://github.com/MattKetmo/EmailChecker) | lines |
+| [adamloving/disposable-email-domains](https://gist.github.com/adamloving/4401361) | lines |
+| [jamesonev/disposable-email-domains](https://gist.github.com/jamesonev/7e188c35fd5ca754c970e3a1caf045ef) | lines |
+| [disposable/static-disposable-lists (mail-data)](https://github.com/disposable/static-disposable-lists) | lines |
+| [disposable/static-disposable-lists (manual)](https://github.com/disposable/static-disposable-lists) | lines |
+| [7c/fakefilter](https://github.com/7c/fakefilter) | lines |
+| [GeroldSetz/emailondeck.com-domains](https://github.com/GeroldSetz/emailondeck.com-domains) | lines |
+| [groundcat/disposable-email-domain-list](https://github.com/groundcat/disposable-email-domain-list) | lines |
+| [romainsimon/emailvalid](https://github.com/romainsimon/emailvalid) | JSON object keys |
+| [temp-mail.io API](https://temp-mail.io) | JSON object |
+| [inboxes.com API](https://inboxes.com) | JSON object |
 
 ---
 
@@ -112,13 +122,15 @@ curl -s https://raw.githubusercontent.com/shrinathsnayak/disposable-domains/main
 {
   name: "owner/repo-name",
   url: "https://raw.githubusercontent.com/owner/repo/main/domains.txt",
-  format: "lines", // or "json_array"
+  format: "lines",
 }
 ```
 
 2. Supported formats:
-   - `"lines"` - one domain per line; `#`, `//`, and `;` comment prefixes are stripped
-   - `"json_array"` - top-level JSON array of domain strings
+   - `"lines"` — one domain per line; `#`, `//`, and `;` comment prefixes are stripped
+   - `"json_array"` — top-level JSON array of domain strings: `["domain.com", ...]`
+   - `"json_object"` — object with an array under a named key; use `key` (and optionally `subkey` for nested objects): `{ "domains": ["domain.com"] }` or `{ "domains": [{ "qdn": "domain.com" }] }`
+   - `"json_object_keys"` — object where domain names are keys; use `value_filter` to include only entries with a specific value: `{ "domain.com": "disposable" }`
 
 3. Run `npm run generate` locally to verify the source resolves correctly.
 
@@ -167,7 +179,7 @@ Requires Node **22+**.
 ## Key features
 
 - **Always fresh**: Regenerated daily via GitHub Actions - no manual updates needed
-- **Multi-source**: 12 community lists merged into one, so gaps in one source are covered by others
+- **Multi-source**: 22 community lists merged into one, so gaps in one source are covered by others
 - **Deduplicated**: A single `Set` pass ensures no domain appears twice
 - **Allowlisted**: Legitimate providers are never accidentally blocked
 - **Auditable**: The `meta` block in `domains.json` shows exactly where every domain came from

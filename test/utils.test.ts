@@ -1,6 +1,6 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
-import { parseLines, parseJsonArray, parseDomains } from "../src/utils.js";
+import { parseLines, parseJsonArray, parseJsonObject, parseJsonObjectKeys, parseDomains } from "../src/utils.js";
 
 describe("parseLines", () => {
   it("parses valid domains", () => {
@@ -67,6 +67,71 @@ describe("parseJsonArray", () => {
   });
 });
 
+describe("parseJsonObject", () => {
+  it("parses flat string array under a key", () => {
+    assert.deepEqual(parseJsonObject('{"domains":["example.com","mail.org"]}', "domains"), ["example.com", "mail.org"]);
+  });
+
+  it("parses nested object array using subkey", () => {
+    assert.deepEqual(
+      parseJsonObject('{"domains":[{"qdn":"example.com"},{"qdn":"mail.org"}]}', "domains", "qdn"),
+      ["example.com", "mail.org"],
+    );
+  });
+
+  it("lowercases and trims entries", () => {
+    assert.deepEqual(parseJsonObject('{"domains":["  EXAMPLE.COM  "]}', "domains"), ["example.com"]);
+  });
+
+  it("drops invalid domains", () => {
+    assert.deepEqual(parseJsonObject('{"domains":["example.com","not valid"]}', "domains"), ["example.com"]);
+  });
+
+  it("returns empty array when key is missing", () => {
+    assert.deepEqual(parseJsonObject('{"other":["example.com"]}', "domains"), []);
+  });
+
+  it("returns empty array for malformed JSON", () => {
+    assert.deepEqual(parseJsonObject("not json", "domains"), []);
+  });
+
+  it("returns empty array when top-level value is not an object", () => {
+    assert.deepEqual(parseJsonObject('["example.com"]', "domains"), []);
+  });
+});
+
+describe("parseJsonObjectKeys", () => {
+  it("extracts all keys as domains", () => {
+    assert.deepEqual(
+      parseJsonObjectKeys('{"example.com":"disposable","mail.org":"freemail"}'),
+      ["example.com", "mail.org"],
+    );
+  });
+
+  it("filters by value_filter when provided", () => {
+    assert.deepEqual(
+      parseJsonObjectKeys('{"example.com":"disposable","mail.org":"freemail"}', "disposable"),
+      ["example.com"],
+    );
+  });
+
+  it("drops invalid domains", () => {
+    assert.deepEqual(parseJsonObjectKeys('{"example.com":"disposable","not valid":"disposable"}', "disposable"), ["example.com"]);
+  });
+
+  it("lowercases and trims keys", () => {
+    assert.deepEqual(parseJsonObjectKeys('{"  EXAMPLE.COM  ":"disposable"}', "disposable"), ["example.com"]);
+  });
+
+  it("returns empty array for malformed JSON", () => {
+    assert.deepEqual(parseJsonObjectKeys("not json"), []);
+  });
+
+  it("returns empty array when top-level value is not a string-record", () => {
+    assert.deepEqual(parseJsonObjectKeys('["example.com"]'), []);
+  });
+});
+
 describe("parseDomains", () => {
   it("routes lines format to parseLines", () => {
     assert.deepEqual(parseDomains("example.com\n# comment", "lines"), ["example.com"]);
@@ -74,6 +139,17 @@ describe("parseDomains", () => {
 
   it("routes json_array format to parseJsonArray", () => {
     assert.deepEqual(parseDomains('["example.com"]', "json_array"), ["example.com"]);
+  });
+
+  it("routes json_object format to parseJsonObject", () => {
+    assert.deepEqual(parseDomains('{"domains":["example.com"]}', "json_object", "domains"), ["example.com"]);
+  });
+
+  it("routes json_object_keys format to parseJsonObjectKeys", () => {
+    assert.deepEqual(
+      parseDomains('{"example.com":"disposable","mail.org":"freemail"}', "json_object_keys", undefined, undefined, "disposable"),
+      ["example.com"],
+    );
   });
 
   it("throws on unknown format", () => {

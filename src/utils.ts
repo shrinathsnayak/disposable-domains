@@ -1,5 +1,7 @@
+import _ from "lodash";
+import { z } from "zod";
 import type { Source } from "./types";
-import { USER_AGENT, FETCH_TIMEOUT_MS, DOMAIN_RE } from "./constants";
+import { USER_AGENT, FETCH_TIMEOUT_MS, DOMAIN_RE, COMMENT_PREFIXES } from "./constants";
 
 /**
  * Fetches the raw text content of a URL.
@@ -11,10 +13,6 @@ import { USER_AGENT, FETCH_TIMEOUT_MS, DOMAIN_RE } from "./constants";
  *
  * @param url - The fully-qualified URL to fetch.
  * @returns The response body as a string, or `null` if the request failed.
- *
- * @example
- * const text = await fetchText("https://example.com/domains.txt");
- * if (text === null) console.warn("fetch failed");
  */
 export async function fetchText(url: string): Promise<string | null> {
   try {
@@ -31,76 +29,149 @@ export async function fetchText(url: string): Promise<string | null> {
   }
 }
 
+
 /**
  * Parses a newline-delimited plain-text domain list.
  *
  * Each line is trimmed and lowercased. Lines that are empty or begin with a
  * comment marker (`#`, `//`, `;`) are dropped. Leading `@` prefixes and
- * trailing dots (common in DNS zone-file style lists) are stripped. Only
- * lines that match {@link DOMAIN_RE} are kept, ensuring the result contains
- * valid domain names.
+ * trailing dots are stripped. Only lines matching {@link DOMAIN_RE} are kept.
  *
  * @param text - Raw file content of a plain-text domain list.
  * @returns Array of normalised, validated domain strings.
- *
- * @example
- * const domains = parseLines("# comment\nexample.com\n@mail.org.\n");
- * // → ["example.com", "mail.org"]
  */
 export function parseLines(text: string): string[] {
-  return text
-    .split("\n")
-    .map((line) => line.trim().toLowerCase())
-    .filter((line) => line && !line.startsWith("#") && !line.startsWith("//") && !line.startsWith(";"))
-    .map((line) => line.replace(/^@/, "").replace(/\.$/, ""))
-    .filter((line) => DOMAIN_RE.test(line));
+  return _(text.split("\n"))
+    .map((line) => _.trim(line).toLowerCase())
+    .reject(
+      (line) =>
+        _.isEmpty(line) ||
+        COMMENT_PREFIXES.some((prefix) => _.startsWith(line, prefix)),
+    )
+    .map((line) => _.trimStart(line, "@").replace(/\.$/, ""))
+    .filter((line) => DOMAIN_RE.test(line))
+    .value();
 }
+
+const domainArraySchema = z.array(z.unknown()).transform((arr) =>
+  _(arr)
+    .filter((d): d is string => typeof d === "string")
+    .map((d) => _.trim(d).toLowerCase())
+    .filter((d) => DOMAIN_RE.test(d))
+    .value(),
+);
 
 /**
  * Parses a JSON array of domain strings.
  *
- * Expects the top-level JSON value to be an array. Non-string elements are
- * silently ignored. Each string is trimmed, lowercased, and validated against
- * {@link DOMAIN_RE}. If the JSON is malformed or the top-level value is not
- * an array, an error is logged and an empty array is returned.
+ * Uses a zod schema to validate the top-level structure is an array, then
+ * normalises each string entry. Non-string elements are silently ignored.
  *
  * @param text - Raw JSON file content.
  * @returns Array of normalised, validated domain strings.
- *
- * @example
- * const domains = parseJsonArray('["Example.COM", "  mail.org  ", 42]');
- * // → ["example.com", "mail.org"]
  */
 export function parseJsonArray(text: string): string[] {
+  let raw: unknown;
   try {
-    const data: unknown = JSON.parse(text);
-    if (Array.isArray(data)) {
-      return data
-        .filter((d): d is string => typeof d === "string")
-        .map((d) => d.trim().toLowerCase())
-        .filter((d) => DOMAIN_RE.test(d));
-    }
+    raw = JSON.parse(text);
   } catch (err) {
-    const message = err instanceof Error ? err.message : String(err);
-    console.error(`  ✗ JSON parse error: ${message}`);
+    console.error(`  ✗ JSON parse error: ${err instanceof Error ? err.message : String(err)}`);
+    return [];
   }
-  return [];
+  const result = domainArraySchema.safeParse(raw);
+  return result.success ? result.data : [];
+}
+
+/**
+ * Parses a JSON object where a named key holds the domain array.
+ *
+ * Validated with zod. Handles two shapes:
+ * - Flat: `{ "<key>": ["domain.com", ...] }` — elements are strings.
+ * - Nested: `{ "<key>": [{ "<subkey>": "domain.com" }, ...] }` — elements are
+ *   objects; `subkey` names the property holding the domain string.
+ *
+ * @param text   - Raw JSON content.
+ * @param key    - Top-level property that holds the array (e.g. `"domains"`).
+ * @param subkey - Optional property name within each array element.
+ * @returns Array of normalised, validated domain strings.
+ */
+export function parseJsonObject(text: string, key: string, subkey?: string): string[] {
+  let raw: unknown;
+  try {
+    raw = JSON.parse(text);
+  } catch (err) {
+    console.error(`  ✗ JSON parse error: ${err instanceof Error ? err.message : String(err)}`);
+    return [];
+  }
+
+  const objSchema = z.record(z.string(), z.unknown());
+  const objResult = objSchema.safeParse(raw);
+  if (!objResult.success || Array.isArray(raw)) return [];
+
+  const arr = objResult.data[key];
+  if (!Array.isArray(arr)) return [];
+
+  return _(arr)
+    .map((item): string | null => {
+      if (subkey) {
+        const nested = z.record(z.string(), z.unknown()).safeParse(item);
+        const val = nested.success ? nested.data[subkey] : undefined;
+        return typeof val === "string" ? val : null;
+      }
+      return typeof item === "string" ? item : null;
+    })
+    .compact()
+    .map((d) => _.trim(d).toLowerCase())
+    .filter((d) => DOMAIN_RE.test(d))
+    .value();
+}
+
+/**
+ * Parses a JSON object where domain names are keys and classification strings
+ * are values — e.g. `{ "mailinator.com": "disposable", "gmail.com": "freemail" }`.
+ *
+ * When `valueFilter` is provided, only domains whose value strictly equals
+ * that string are included (e.g. `"disposable"` to exclude freemail entries).
+ *
+ * @param text        - Raw JSON content.
+ * @param valueFilter - Optional value to filter on (e.g. `"disposable"`).
+ * @returns Array of normalised, validated domain strings.
+ */
+export function parseJsonObjectKeys(text: string, valueFilter?: string): string[] {
+  let raw: unknown;
+  try {
+    raw = JSON.parse(text);
+  } catch (err) {
+    console.error(`  ✗ JSON parse error: ${err instanceof Error ? err.message : String(err)}`);
+    return [];
+  }
+
+  const schema = z.record(z.string(), z.string());
+  const result = schema.safeParse(raw);
+  if (!result.success) return [];
+
+  return _(result.data)
+    .pickBy((val) => (valueFilter ? val === valueFilter : true))
+    .keys()
+    .map((d) => _.trim(d).toLowerCase())
+    .filter((d) => DOMAIN_RE.test(d))
+    .value();
 }
 
 /**
  * Dispatches raw text to the correct parser based on the source format.
  *
- * Acts as a router between {@link parseLines} and {@link parseJsonArray}.
- * If an unknown format is passed the function returns an empty array rather
- * than throwing, keeping the aggregation pipeline fault-tolerant.
- *
  * @param text   - Raw file content to parse.
- * @param format - The expected format of the content (`"lines"` or `"json_array"`).
+ * @param format - The expected format of the content.
+ * @param key    - For `json_object`: the top-level key holding the domain array.
+ * @param subkey - For `json_object`: the per-element key holding the domain string.
  * @returns Array of normalised, validated domain strings.
  */
-export function parseDomains(text: string, format: Source["format"]): string[] {
+export function parseDomains(text: string, format: Source["format"], key?: string, subkey?: string, value_filter?: string): string[] {
   if (format === "lines") return parseLines(text);
   if (format === "json_array") return parseJsonArray(text);
+  if (format === "json_object") return parseJsonObject(text, key ?? "domains", subkey);
+  if (format === "json_object_keys") return parseJsonObjectKeys(text, value_filter);
   throw new Error(`Unknown format: ${format as string}`);
 }
 
@@ -115,20 +186,16 @@ export function parseDomains(text: string, format: Source["format"]): string[] {
  * @param source - The source descriptor containing `name`, `url`, and `format`.
  * @returns An object with the original `source`, the parsed `domains` array,
  *          and a `status` of `"ok"` or `"error"`.
- *
- * @example
- * const result = await fetchSource(SOURCES[0]);
- * console.log(result.status, result.domains.length);
  */
 export async function fetchSource(
-  source: Source
+  source: Source,
 ): Promise<{ source: Source; domains: string[]; status: "ok" | "error" }> {
   console.log(`Fetching ${source.name}…`);
   const text = await fetchText(source.url);
   if (text === null) {
     return { source, domains: [], status: "error" };
   }
-  const domains = parseDomains(text, source.format);
+  const domains = parseDomains(text, source.format, source.key, source.subkey, source.value_filter);
   console.log(`  → ${domains.length.toLocaleString()} parsed`);
   return { source, domains, status: "ok" };
 }

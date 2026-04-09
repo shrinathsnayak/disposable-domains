@@ -62,6 +62,60 @@ export const SOURCES: Source[] = [
     url: "https://raw.githubusercontent.com/MattKetmo/EmailChecker/master/res/throwaway_domains.txt",
     format: "lines",
   },
+  {
+    name: "adamloving/disposable-email-domains",
+    url: "https://gist.githubusercontent.com/adamloving/4401361/raw/",
+    format: "lines",
+  },
+  {
+    name: "jamesonev/disposable-email-domains",
+    url: "https://gist.githubusercontent.com/jamesonev/7e188c35fd5ca754c970e3a1caf045ef/raw/",
+    format: "lines",
+  },
+  {
+    name: "disposable/static-disposable-lists (mail-data-hosts-net)",
+    url: "https://raw.githubusercontent.com/disposable/static-disposable-lists/master/mail-data-hosts-net.txt",
+    format: "lines",
+  },
+  {
+    name: "disposable/static-disposable-lists (manual)",
+    url: "https://raw.githubusercontent.com/disposable/static-disposable-lists/master/manual.txt",
+    format: "lines",
+  },
+  {
+    name: "7c/fakefilter",
+    url: "https://raw.githubusercontent.com/7c/fakefilter/main/txt/data.txt",
+    format: "lines",
+  },
+  {
+    name: "GeroldSetz/emailondeck.com-domains",
+    url: "https://raw.githubusercontent.com/GeroldSetz/emailondeck.com-domains/refs/heads/master/emailondeck.com_domains_from_bdea.cc.txt",
+    format: "lines",
+  },
+  {
+    name: "temp-mail.io/api/v2/domains",
+    url: "https://api.internal.temp-mail.io/api/v2/domains",
+    format: "json_object",
+    key: "domains",
+  },
+  {
+    name: "groundcat/disposable-email-domain-list",
+    url: "https://raw.githubusercontent.com/groundcat/disposable-email-domain-list/master/domains.txt",
+    format: "lines",
+  },
+  {
+    name: "romainsimon/emailvalid",
+    url: "https://raw.githubusercontent.com/romainsimon/emailvalid/refs/heads/master/domains.json",
+    format: "json_object_keys",
+    value_filter: "disposable",
+  },
+  {
+    name: "inboxes.com/api/v2/domain",
+    url: "https://inboxes.com/api/v2/domain",
+    format: "json_object",
+    key: "domains",
+    subkey: "qdn",
+  },
 ];
 
 export const ALLOWLIST_URL =
