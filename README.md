@@ -1,6 +1,6 @@
 # disposable-domains
 
-A single, always-current list of **disposable email domains** - aggregated from 22 community sources, deduplicated, and published as `domains.json` every day.
+A single, always-current list of **disposable email domains** - aggregated from 20 community sources, deduplicated, and published as `domains.json` every day.
 
 ---
 
@@ -8,7 +8,7 @@ A single, always-current list of **disposable email domains** - aggregated from 
 
 Every day at **02:00 UTC**, a GitHub Actions workflow:
 
-1. Fetches all 22 upstream blocklists **in parallel**
+1. Fetches all 20 upstream blocklists **in parallel**
 2. Merges and **deduplicates** across all sources using a `Set`
 3. Filters out legitimate providers via an **allowlist** (so real domains are never blocked)
 4. Writes a single sorted `domains.json` with stats and a flat domain array
@@ -25,7 +25,7 @@ You can also trigger a manual regeneration any time via `workflow_dispatch`.
   "meta": {
     "generated_at": "2026-04-10T02:00:00.000Z",
     "total": 205489,
-    "source_count": 22,
+    "source_count": 20,
     "sources": [
       {
         "name": "ivolo/disposable-email-domains",
@@ -109,8 +109,6 @@ curl -s https://raw.githubusercontent.com/shrinathsnayak/disposable-domains/main
 | [GeroldSetz/emailondeck.com-domains](https://github.com/GeroldSetz/emailondeck.com-domains) | lines |
 | [groundcat/disposable-email-domain-list](https://github.com/groundcat/disposable-email-domain-list) | lines |
 | [romainsimon/emailvalid](https://github.com/romainsimon/emailvalid) | JSON object keys |
-| [temp-mail.io API](https://temp-mail.io) | JSON object |
-| [inboxes.com API](https://inboxes.com) | JSON object |
 
 ---
 
@@ -179,7 +177,7 @@ Requires Node **22+**.
 ## Key features
 
 - **Always fresh**: Regenerated daily via GitHub Actions - no manual updates needed
-- **Multi-source**: 22 community lists merged into one, so gaps in one source are covered by others
+- **Multi-source**: 20 community lists merged into one, so gaps in one source are covered by others
 - **Deduplicated**: A single `Set` pass ensures no domain appears twice
 - **Allowlisted**: Legitimate providers are never accidentally blocked
 - **Auditable**: The `meta` block in `domains.json` shows exactly where every domain came from

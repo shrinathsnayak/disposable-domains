@@ -93,12 +93,6 @@ export const SOURCES: Source[] = [
     format: "lines",
   },
   {
-    name: "temp-mail.io/api/v2/domains",
-    url: "https://api.internal.temp-mail.io/api/v2/domains",
-    format: "json_object",
-    key: "domains",
-  },
-  {
     name: "groundcat/disposable-email-domain-list",
     url: "https://raw.githubusercontent.com/groundcat/disposable-email-domain-list/master/domains.txt",
     format: "lines",
@@ -108,13 +102,6 @@ export const SOURCES: Source[] = [
     url: "https://raw.githubusercontent.com/romainsimon/emailvalid/refs/heads/master/domains.json",
     format: "json_object_keys",
     value_filter: "disposable",
-  },
-  {
-    name: "inboxes.com/api/v2/domain",
-    url: "https://inboxes.com/api/v2/domain",
-    format: "json_object",
-    key: "domains",
-    subkey: "qdn",
   },
 ];
 
