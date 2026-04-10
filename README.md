@@ -1,6 +1,6 @@
 # disposable-domains
 
-A single, always-current list of **disposable email domains** - aggregated from 25 community sources, deduplicated, and published as `domains.json` every day.
+A single, always-current list of **disposable email domains** - aggregated from 27 community sources, deduplicated, and published as `domains.json` every day.
 
 ---
 
@@ -8,7 +8,7 @@ A single, always-current list of **disposable email domains** - aggregated from 
 
 Every day at **02:00 UTC**, a GitHub Actions workflow:
 
-1. Fetches all 25 upstream blocklists **concurrently** (capped at 8 in-flight to avoid rate-limiting)
+1. Fetches all 27 upstream blocklists **concurrently** (capped at 8 in-flight to avoid rate-limiting)
 2. Merges domains into a `Set` **as each source resolves** — no waiting for the full batch
 3. Filters out legitimate providers via a remote **allowlist** and any entries in `ALLOWED_DOMAINS`
 4. Writes a single sorted `domains.json` with stats and a flat domain array
@@ -25,7 +25,7 @@ You can also trigger a manual regeneration any time via `workflow_dispatch`.
   "meta": {
     "generated_at": "2026-04-10T02:00:00.000Z",
     "total": 196394,
-    "source_count": 25,
+    "source_count": 27,
     "sources": [
       {
         "name": "ivolo/disposable-email-domains",
@@ -114,6 +114,8 @@ curl -s https://raw.githubusercontent.com/shrinathsnayak/disposable-domains/main
 | [eser/sanitizer-svc](https://github.com/eser/sanitizer-svc) | lines |
 | [kslr/disposable-email-domains](https://github.com/kslr/disposable-email-domains) | lines |
 | [sublime-security/static-files](https://github.com/sublime-security/static-files) | lines |
+| [doodad-labs/disposable-email-domains](https://github.com/doodad-labs/disposable-email-domains) | lines |
+| [Propaganistas/Laravel-Disposable-Email](https://github.com/Propaganistas/Laravel-Disposable-Email) | JSON array |
 
 ---
 
@@ -155,7 +157,7 @@ This is merged with the remote allowlist at generation time.
 ```
 disposable-domains/
 ├── src/
-│   ├── blocked-sources.ts  - upstream blocklist sources (25 entries)
+│   ├── blocked-sources.ts  - upstream blocklist sources (27 entries)
 │   ├── allowed-sources.ts  - remote allowlist URL + user-defined ALLOWED_DOMAINS
 │   ├── constants.ts        - output path, user-agent, timeout, concurrency limit, domain regex
 │   ├── logger.ts           - winston logger (timestamp + colorized level)
@@ -195,7 +197,7 @@ Requires Node **22+**.
 ## Key features
 
 - **Always fresh**: Regenerated daily via GitHub Actions - no manual updates needed
-- **Multi-source**: 25 community lists merged into one, so gaps in one source are covered by others
+- **Multi-source**: 27 community lists merged into one, so gaps in one source are covered by others
 - **Deduplicated**: A single `Set` pass ensures no domain appears twice
 - **Allowlisted**: Legitimate providers are never accidentally blocked — extend via `ALLOWED_DOMAINS`
 - **Concurrent**: Sources are fetched with a concurrency cap to avoid rate-limiting

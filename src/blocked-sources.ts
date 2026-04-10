@@ -128,4 +128,14 @@ export const BLOCKED_SOURCES: Source[] = [
     url: "https://raw.githubusercontent.com/sublime-security/static-files/master/disposable_email_providers.txt",
     format: "lines",
   },
+  {
+    name: "doodad-labs/disposable-email-domains",
+    url: "https://raw.githubusercontent.com/doodad-labs/disposable-email-domains/main/data/domains.txt",
+    format: "lines",
+  },
+  {
+    name: "Propaganistas/Laravel-Disposable-Email",
+    url: "https://raw.githubusercontent.com/Propaganistas/Laravel-Disposable-Email/master/domains.json",
+    format: "json_array",
+  },
 ];
