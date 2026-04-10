@@ -12,11 +12,11 @@ const STATS_END = "<!-- STATS_END -->";
 async function main(): Promise<void> {
   const raw = await readFile(DOMAINS_PATH, "utf8");
   const data = JSON.parse(raw) as {
-    meta: { generated_at: string; total: number; source_count: number };
+    meta: { generated_on: string; total: number; source_count: number };
   };
 
-  const { total, source_count, generated_at } = data.meta;
-  const generatedDate = new Date(generated_at).toUTCString();
+  const { total, source_count, generated_on } = data.meta;
+  const generatedDate = new Date(generated_on).toUTCString();
 
   const table = [
     `| Metric | Value |`,
