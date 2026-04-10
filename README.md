@@ -33,14 +33,14 @@ Every disposable email blocklist has blind spots. This repo pulls from **27 comm
 Grab the raw file and check against it in any language:
 
 ```
-https://raw.githubusercontent.com/shrinathsnayak/disposable-domains/main/domains.json
+https://cdn.jsdelivr.net/gh/shrinathsnayak/disposable-domains/domains.json
 ```
 
 ### TypeScript / JavaScript
 
 ```ts
 const { domains } = await fetch(
-  "https://raw.githubusercontent.com/shrinathsnayak/disposable-domains/main/domains.json",
+  "https://cdn.jsdelivr.net/gh/shrinathsnayak/disposable-domains/domains.json",
 ).then((r) => r.json());
 
 const blocked = new Set<string>(domains);
@@ -56,7 +56,7 @@ function isDisposable(email: string): boolean {
 import urllib.request, json
 
 with urllib.request.urlopen(
-    "https://raw.githubusercontent.com/shrinathsnayak/disposable-domains/main/domains.json"
+  "https://cdn.jsdelivr.net/gh/shrinathsnayak/disposable-domains/domains.json"
 ) as res:
     data = json.load(res)
 
@@ -70,7 +70,7 @@ def is_disposable(email: str) -> bool:
 ### 🔍 Inspect metadata with curl
 
 ```bash
-curl -s https://raw.githubusercontent.com/shrinathsnayak/disposable-domains/main/domains.json \
+curl -s https://cdn.jsdelivr.net/gh/shrinathsnayak/disposable-domains/domains.json \
   | jq '.meta'
 ```
 
