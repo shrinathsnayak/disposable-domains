@@ -18,6 +18,8 @@
     "build": "tsc",
     "generate": "tsx src/generate.ts",
     "generate:prod": "tsc && node dist/generate.js",
+    "update-readme": "tsx src/update-readme.ts",
+    "update-readme:prod": "node dist/update-readme.js",
     "test": "tsx --test test/utils.test.ts",
     "lint": "eslint src/**/*.ts",
     "lint:fix": "eslint src/**/*.ts --fix",

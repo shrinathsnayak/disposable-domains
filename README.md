@@ -10,6 +10,20 @@
 
 ---
 
+## 📊 Stats
+
+<!-- STATS_START -->
+
+| Metric             | Value |
+| ------------------ | ----- |
+| Disposable Domains | —     |
+| Sources            | —     |
+| Generated on       | —     |
+
+<!-- STATS_END -->
+
+---
+
 ## 🛡 Why this exists
 
 Every disposable email blocklist has blind spots. This repo pulls from **27 community-maintained lists**, merges them into a single sorted `domains.json`, and pushes an update every day at 02:00 UTC — so you get broader coverage without managing multiple upstreams yourself.
@@ -28,7 +42,7 @@ https://raw.githubusercontent.com/shrinathsnayak/disposable-domains/main/domains
 
 ```ts
 const { domains } = await fetch(
-  "https://raw.githubusercontent.com/shrinathsnayak/disposable-domains/main/domains.json"
+  "https://raw.githubusercontent.com/shrinathsnayak/disposable-domains/main/domains.json",
 ).then((r) => r.json());
 
 const blocked = new Set<string>(domains);
@@ -71,7 +85,7 @@ curl -s https://raw.githubusercontent.com/shrinathsnayak/disposable-domains/main
 ```json
 {
   "meta": {
-    "generated_at": "2026-04-10T02:00:00.000Z",
+    "generated_on": "2026-04-10T02:00:00.000Z",
     "total": 196394,
     "source_count": 27,
     "sources": [
@@ -109,35 +123,35 @@ You can also trigger a manual run any time from the Actions tab via `workflow_di
 
 27 community lists, merged into one:
 
-| Source | Format |
-|--------|--------|
-| [disposable-email-domains/disposable-email-domains](https://github.com/disposable-email-domains/disposable-email-domains) | lines |
-| [disposable/disposable-email-domains (TXT)](https://disposable.github.io/disposable-email-domains/domains.txt) | lines |
-| [disposable/disposable-email-domains (MX-verified)](https://disposable.github.io/disposable-email-domains/domains_mx.txt) | lines |
-| [ivolo/disposable-email-domains](https://github.com/ivolo/disposable-email-domains) | json_array |
-| [wesbos/burner-email-providers](https://github.com/wesbos/burner-email-providers) | lines |
-| [FGRibreau/mailchecker](https://github.com/FGRibreau/mailchecker) | lines |
-| [flotwig/disposable-email-addresses](https://github.com/flotwig/disposable-email-addresses) | lines |
-| [daisy1754/jp-disposable-emails](https://github.com/daisy1754/jp-disposable-emails) | lines |
-| [unkn0w/disposable-email-domain-list](https://github.com/unkn0w/disposable-email-domain-list) | lines |
-| [amieiro/disposable-email-domains](https://github.com/amieiro/disposable-email-domains) | lines |
-| [stopforumspam/toxic_domains](https://www.stopforumspam.com) | lines |
-| [MattKetmo/EmailChecker](https://github.com/MattKetmo/EmailChecker) | lines |
-| [adamloving/disposable-email-domains](https://gist.github.com/adamloving/4401361) | lines |
-| [jamesonev/disposable-email-domains](https://gist.github.com/jamesonev/7e188c35fd5ca754c970e3a1caf045ef) | lines |
-| [disposable/static-disposable-lists (mail-data-hosts-net)](https://github.com/disposable/static-disposable-lists) | lines |
-| [disposable/static-disposable-lists (manual)](https://github.com/disposable/static-disposable-lists) | lines |
-| [7c/fakefilter](https://github.com/7c/fakefilter) | lines |
-| [GeroldSetz/emailondeck.com-domains](https://github.com/GeroldSetz/emailondeck.com-domains) | lines |
-| [groundcat/disposable-email-domain-list](https://github.com/groundcat/disposable-email-domain-list) | lines |
-| [romainsimon/emailvalid](https://github.com/romainsimon/emailvalid) | json_object_keys |
-| [andreis/disposable-email-domains](https://github.com/andreis/disposable-email-domains) | lines |
-| [TheDahoom/disposable-email](https://github.com/TheDahoom/disposable-email) | lines |
-| [eser/sanitizer-svc](https://github.com/eser/sanitizer-svc) | lines |
-| [kslr/disposable-email-domains](https://github.com/kslr/disposable-email-domains) | lines |
-| [sublime-security/static-files](https://github.com/sublime-security/static-files) | lines |
-| [doodad-labs/disposable-email-domains](https://github.com/doodad-labs/disposable-email-domains) | lines |
-| [Propaganistas/Laravel-Disposable-Email](https://github.com/Propaganistas/Laravel-Disposable-Email) | json_array |
+| Source                                                                                                                    | Format           |
+| ------------------------------------------------------------------------------------------------------------------------- | ---------------- |
+| [disposable-email-domains/disposable-email-domains](https://github.com/disposable-email-domains/disposable-email-domains) | lines            |
+| [disposable/disposable-email-domains (TXT)](https://disposable.github.io/disposable-email-domains/domains.txt)            | lines            |
+| [disposable/disposable-email-domains (MX-verified)](https://disposable.github.io/disposable-email-domains/domains_mx.txt) | lines            |
+| [ivolo/disposable-email-domains](https://github.com/ivolo/disposable-email-domains)                                       | json_array       |
+| [wesbos/burner-email-providers](https://github.com/wesbos/burner-email-providers)                                         | lines            |
+| [FGRibreau/mailchecker](https://github.com/FGRibreau/mailchecker)                                                         | lines            |
+| [flotwig/disposable-email-addresses](https://github.com/flotwig/disposable-email-addresses)                               | lines            |
+| [daisy1754/jp-disposable-emails](https://github.com/daisy1754/jp-disposable-emails)                                       | lines            |
+| [unkn0w/disposable-email-domain-list](https://github.com/unkn0w/disposable-email-domain-list)                             | lines            |
+| [amieiro/disposable-email-domains](https://github.com/amieiro/disposable-email-domains)                                   | lines            |
+| [stopforumspam/toxic_domains](https://www.stopforumspam.com)                                                              | lines            |
+| [MattKetmo/EmailChecker](https://github.com/MattKetmo/EmailChecker)                                                       | lines            |
+| [adamloving/disposable-email-domains](https://gist.github.com/adamloving/4401361)                                         | lines            |
+| [jamesonev/disposable-email-domains](https://gist.github.com/jamesonev/7e188c35fd5ca754c970e3a1caf045ef)                  | lines            |
+| [disposable/static-disposable-lists (mail-data-hosts-net)](https://github.com/disposable/static-disposable-lists)         | lines            |
+| [disposable/static-disposable-lists (manual)](https://github.com/disposable/static-disposable-lists)                      | lines            |
+| [7c/fakefilter](https://github.com/7c/fakefilter)                                                                         | lines            |
+| [GeroldSetz/emailondeck.com-domains](https://github.com/GeroldSetz/emailondeck.com-domains)                               | lines            |
+| [groundcat/disposable-email-domain-list](https://github.com/groundcat/disposable-email-domain-list)                       | lines            |
+| [romainsimon/emailvalid](https://github.com/romainsimon/emailvalid)                                                       | json_object_keys |
+| [andreis/disposable-email-domains](https://github.com/andreis/disposable-email-domains)                                   | lines            |
+| [TheDahoom/disposable-email](https://github.com/TheDahoom/disposable-email)                                               | lines            |
+| [eser/sanitizer-svc](https://github.com/eser/sanitizer-svc)                                                               | lines            |
+| [kslr/disposable-email-domains](https://github.com/kslr/disposable-email-domains)                                         | lines            |
+| [sublime-security/static-files](https://github.com/sublime-security/static-files)                                         | lines            |
+| [doodad-labs/disposable-email-domains](https://github.com/doodad-labs/disposable-email-domains)                           | lines            |
+| [Propaganistas/Laravel-Disposable-Email](https://github.com/Propaganistas/Laravel-Disposable-Email)                       | json_array       |
 
 ---
 
@@ -157,11 +171,11 @@ You can also trigger a manual run any time from the Actions tab via `workflow_di
 
 2. Supported formats:
 
-| Format | Description |
-|--------|-------------|
-| `lines` | One domain per line — `#`, `//`, and `;` comment prefixes are stripped |
-| `json_array` | Top-level JSON array of domain strings |
-| `json_object_keys` | JSON object where domain names are the keys |
+| Format             | Description                                                            |
+| ------------------ | ---------------------------------------------------------------------- |
+| `lines`            | One domain per line — `#`, `//`, and `;` comment prefixes are stripped |
+| `json_array`       | Top-level JSON array of domain strings                                 |
+| `json_object_keys` | JSON object where domain names are the keys                            |
 
 3. Run `npm run generate` locally to confirm the source resolves correctly, then open a PR.
 
@@ -170,9 +184,7 @@ You can also trigger a manual run any time from the Actions tab via `workflow_di
 To prevent a domain from ever appearing in the output, add it to `ALLOWED_DOMAINS` in [`src/allowed-sources.ts`](src/allowed-sources.ts):
 
 ```ts
-export const ALLOWED_DOMAINS: string[] = [
-  "example.com",
-];
+export const ALLOWED_DOMAINS: string[] = ["example.com"];
 ```
 
 This is merged with the remote allowlist at generation time.

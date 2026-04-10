@@ -37,7 +37,7 @@ async function main(): Promise<void> {
 
   const output = {
     meta: {
-      generated_at: new Date().toISOString(),
+      generated_on: new Date().toISOString(),
       total: sorted.length,
       source_count: BLOCKED_SOURCES.length,
       sources: stats,
