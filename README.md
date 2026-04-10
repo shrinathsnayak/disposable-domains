@@ -1,6 +1,6 @@
 # disposable-domains
 
-A single, always-current list of **disposable email domains** - aggregated from 20 community sources, deduplicated, and published as `domains.json` every day.
+A single, always-current list of **disposable email domains** - aggregated from 25 community sources, deduplicated, and published as `domains.json` every day.
 
 ---
 
@@ -8,9 +8,9 @@ A single, always-current list of **disposable email domains** - aggregated from 
 
 Every day at **02:00 UTC**, a GitHub Actions workflow:
 
-1. Fetches all 20 upstream blocklists **in parallel**
-2. Merges and **deduplicates** across all sources using a `Set`
-3. Filters out legitimate providers via an **allowlist** (so real domains are never blocked)
+1. Fetches all 25 upstream blocklists **concurrently** (capped at 8 in-flight to avoid rate-limiting)
+2. Merges domains into a `Set` **as each source resolves** — no waiting for the full batch
+3. Filters out legitimate providers via a remote **allowlist** and any entries in `ALLOWED_DOMAINS`
 4. Writes a single sorted `domains.json` with stats and a flat domain array
 5. Commits the result only **if the content actually changed**
 
@@ -24,8 +24,8 @@ You can also trigger a manual regeneration any time via `workflow_dispatch`.
 {
   "meta": {
     "generated_at": "2026-04-10T02:00:00.000Z",
-    "total": 205489,
-    "source_count": 20,
+    "total": 196394,
+    "source_count": 25,
     "sources": [
       {
         "name": "ivolo/disposable-email-domains",
@@ -103,34 +103,50 @@ curl -s https://raw.githubusercontent.com/shrinathsnayak/disposable-domains/main
 | [MattKetmo/EmailChecker](https://github.com/MattKetmo/EmailChecker) | lines |
 | [adamloving/disposable-email-domains](https://gist.github.com/adamloving/4401361) | lines |
 | [jamesonev/disposable-email-domains](https://gist.github.com/jamesonev/7e188c35fd5ca754c970e3a1caf045ef) | lines |
-| [disposable/static-disposable-lists (mail-data)](https://github.com/disposable/static-disposable-lists) | lines |
+| [disposable/static-disposable-lists (mail-data-hosts-net)](https://github.com/disposable/static-disposable-lists) | lines |
 | [disposable/static-disposable-lists (manual)](https://github.com/disposable/static-disposable-lists) | lines |
 | [7c/fakefilter](https://github.com/7c/fakefilter) | lines |
 | [GeroldSetz/emailondeck.com-domains](https://github.com/GeroldSetz/emailondeck.com-domains) | lines |
 | [groundcat/disposable-email-domain-list](https://github.com/groundcat/disposable-email-domain-list) | lines |
 | [romainsimon/emailvalid](https://github.com/romainsimon/emailvalid) | JSON object keys |
+| [andreis/disposable-email-domains](https://github.com/andreis/disposable-email-domains) | lines |
+| [TheDahoom/disposable-email](https://github.com/TheDahoom/disposable-email) | lines |
+| [eser/sanitizer-svc](https://github.com/eser/sanitizer-svc) | lines |
+| [kslr/disposable-email-domains](https://github.com/kslr/disposable-email-domains) | lines |
+| [sublime-security/static-files](https://github.com/sublime-security/static-files) | lines |
 
 ---
 
-## Adding a source
+## Adding a blocked source
 
-1. Add an entry to `SOURCES` in [src/sources.ts](src/sources.ts):
+1. Add an entry to `BLOCKED_SOURCES` in [src/blocked-sources.ts](src/blocked-sources.ts):
 
 ```ts
 {
   name: "owner/repo-name",
   url: "https://raw.githubusercontent.com/owner/repo/main/domains.txt",
-  format: "lines",
+  format: "lines", // or "json_array" / "json_object_keys"
 }
 ```
 
 2. Supported formats:
    - `"lines"` — one domain per line; `#`, `//`, and `;` comment prefixes are stripped
-   - `"json_array"` — top-level JSON array of domain strings: `["domain.com", ...]`
-   - `"json_object"` — object with an array under a named key; use `key` (and optionally `subkey` for nested objects): `{ "domains": ["domain.com"] }` or `{ "domains": [{ "qdn": "domain.com" }] }`
-   - `"json_object_keys"` — object where domain names are keys; use `value_filter` to include only entries with a specific value: `{ "domain.com": "disposable" }`
+   - `"json_array"` — top-level JSON array of domain strings
+   - `"json_object_keys"` — JSON object where domain names are keys (optionally filter by value)
 
 3. Run `npm run generate` locally to verify the source resolves correctly.
+
+## Whitelisting a domain
+
+To prevent a domain from ever appearing in the blocked list, add it to `ALLOWED_DOMAINS` in [src/allowed-sources.ts](src/allowed-sources.ts):
+
+```ts
+export const ALLOWED_DOMAINS: string[] = [
+  "example.com",
+];
+```
+
+This is merged with the remote allowlist at generation time.
 
 ---
 
@@ -139,16 +155,18 @@ curl -s https://raw.githubusercontent.com/shrinathsnayak/disposable-domains/main
 ```
 disposable-domains/
 ├── src/
-│   ├── constants.ts   - output path, user-agent, timeout, domain regex
-│   ├── sources.ts     - upstream source list
-│   ├── types.ts       - TypeScript interfaces (Source, SourceStat)
-│   ├── utils.ts       - fetch and parse helpers
-│   └── generate.ts    - orchestration entry point
+│   ├── blocked-sources.ts  - upstream blocklist sources (25 entries)
+│   ├── allowed-sources.ts  - remote allowlist URL + user-defined ALLOWED_DOMAINS
+│   ├── constants.ts        - output path, user-agent, timeout, concurrency limit, domain regex
+│   ├── logger.ts           - winston logger (timestamp + colorized level)
+│   ├── types.ts            - TypeScript interfaces (Source, SourceStat)
+│   ├── utils.ts            - fetch, parse, and concurrency helpers
+│   └── generate.ts         - orchestration entry point
 ├── test/
-│   └── utils.test.ts  - unit tests for parse helpers
+│   └── utils.test.ts       - unit tests for parse helpers
 ├── .github/workflows/
-│   ├── generate.yml   - daily cron: regenerates and commits domains.json
-│   └── test.yml       - runs on every PR
+│   ├── generate.yml        - daily cron: regenerates and commits domains.json
+│   └── test.yml            - runs on every PR
 ├── domains.json
 └── README.md
 ```
@@ -177,21 +195,11 @@ Requires Node **22+**.
 ## Key features
 
 - **Always fresh**: Regenerated daily via GitHub Actions - no manual updates needed
-- **Multi-source**: 20 community lists merged into one, so gaps in one source are covered by others
+- **Multi-source**: 25 community lists merged into one, so gaps in one source are covered by others
 - **Deduplicated**: A single `Set` pass ensures no domain appears twice
-- **Allowlisted**: Legitimate providers are never accidentally blocked
+- **Allowlisted**: Legitimate providers are never accidentally blocked — extend via `ALLOWED_DOMAINS`
+- **Concurrent**: Sources are fetched with a concurrency cap to avoid rate-limiting
 - **Auditable**: The `meta` block in `domains.json` shows exactly where every domain came from
-
----
-
-## Future
-
-Additional capabilities that may be added:
-
-- npm package for direct import
-- REST API for real-time lookups
-- Webhook notifications on significant list changes
-- Per-source diff tracking
 
 ---
 

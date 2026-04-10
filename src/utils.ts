@@ -1,7 +1,39 @@
 import _ from "lodash";
 import { z } from "zod";
 import type { Source } from "./types";
-import { USER_AGENT, FETCH_TIMEOUT_MS, DOMAIN_RE, COMMENT_PREFIXES } from "./constants";
+import {
+  USER_AGENT,
+  FETCH_TIMEOUT_MS,
+  DOMAIN_RE,
+  COMMENT_PREFIXES,
+  CONCURRENCY_LIMIT,
+} from "./constants";
+import logger from "./logger";
+
+/**
+ * Runs `fn` over every item with at most `limit` in-flight at once.
+ * Items are dispatched in order; the next one starts as soon as a slot frees.
+ */
+export async function runWithConcurrency<T>(
+  items: T[],
+  fn: (item: T) => Promise<void>,
+): Promise<void> {
+  const queue = [...items];
+  const active = new Set<Promise<void>>();
+
+  function dispatch(): void {
+    if (queue.length === 0) return;
+    const item = queue.shift()!;
+    const p: Promise<void> = fn(item).finally(() => {
+      active.delete(p);
+      dispatch();
+    });
+    active.add(p);
+  }
+
+  for (let i = 0; i < Math.min(CONCURRENCY_LIMIT, items.length); i++) dispatch();
+  while (active.size > 0) await Promise.race(active);
+}
 
 /**
  * Fetches the raw text content of a URL.
@@ -24,11 +56,10 @@ export async function fetchText(url: string): Promise<string | null> {
     return await res.text();
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
-    console.error(`  ✗ ${url}: ${message}`);
+    logger.error(`✗ ${url}: ${message}`);
     return null;
   }
 }
-
 
 /**
  * Parses a newline-delimited plain-text domain list.
@@ -41,16 +72,14 @@ export async function fetchText(url: string): Promise<string | null> {
  * @returns Array of normalised, validated domain strings.
  */
 export function parseLines(text: string): string[] {
-  return _(text.split("\n"))
-    .map((line) => _.trim(line).toLowerCase())
-    .reject(
-      (line) =>
-        _.isEmpty(line) ||
-        COMMENT_PREFIXES.some((prefix) => _.startsWith(line, prefix)),
-    )
-    .map((line) => _.trimStart(line, "@").replace(/\.$/, ""))
-    .filter((line) => DOMAIN_RE.test(line))
-    .value();
+  const result: string[] = [];
+  for (const raw of text.split("\n")) {
+    const line = raw.trim().toLowerCase();
+    if (!line || COMMENT_PREFIXES.some((p) => line.startsWith(p))) continue;
+    const domain = line.replace(/^@+/, "").replace(/\.$/, "");
+    if (DOMAIN_RE.test(domain)) result.push(domain);
+  }
+  return result;
 }
 
 const domainArraySchema = z.array(z.unknown()).transform((arr) =>
@@ -75,7 +104,7 @@ export function parseJsonArray(text: string): string[] {
   try {
     raw = JSON.parse(text);
   } catch (err) {
-    console.error(`  ✗ JSON parse error: ${err instanceof Error ? err.message : String(err)}`);
+    logger.error(`JSON parse error: ${err instanceof Error ? err.message : String(err)}`);
     return [];
   }
   const result = domainArraySchema.safeParse(raw);
@@ -100,7 +129,7 @@ export function parseJsonObject(text: string, key: string, subkey?: string): str
   try {
     raw = JSON.parse(text);
   } catch (err) {
-    console.error(`  ✗ JSON parse error: ${err instanceof Error ? err.message : String(err)}`);
+    logger.error(`JSON parse error: ${err instanceof Error ? err.message : String(err)}`);
     return [];
   }
 
@@ -142,7 +171,7 @@ export function parseJsonObjectKeys(text: string, valueFilter?: string): string[
   try {
     raw = JSON.parse(text);
   } catch (err) {
-    console.error(`  ✗ JSON parse error: ${err instanceof Error ? err.message : String(err)}`);
+    logger.error(`JSON parse error: ${err instanceof Error ? err.message : String(err)}`);
     return [];
   }
 
@@ -167,7 +196,13 @@ export function parseJsonObjectKeys(text: string, valueFilter?: string): string[
  * @param subkey - For `json_object`: the per-element key holding the domain string.
  * @returns Array of normalised, validated domain strings.
  */
-export function parseDomains(text: string, format: Source["format"], key?: string, subkey?: string, value_filter?: string): string[] {
+export function parseDomains(
+  text: string,
+  format: Source["format"],
+  key?: string,
+  subkey?: string,
+  value_filter?: string,
+): string[] {
   if (format === "lines") return parseLines(text);
   if (format === "json_array") return parseJsonArray(text);
   if (format === "json_object") return parseJsonObject(text, key ?? "domains", subkey);
@@ -190,12 +225,12 @@ export function parseDomains(text: string, format: Source["format"], key?: strin
 export async function fetchSource(
   source: Source,
 ): Promise<{ source: Source; domains: string[]; status: "ok" | "error" }> {
-  console.log(`Fetching ${source.name}…`);
+  logger.info(`Fetching ${source.name}…`);
   const text = await fetchText(source.url);
   if (text === null) {
     return { source, domains: [], status: "error" };
   }
   const domains = parseDomains(text, source.format, source.key, source.subkey, source.value_filter);
-  console.log(`  → ${domains.length.toLocaleString()} parsed`);
+  logger.info(`  → ${domains.length.toLocaleString()} domains parsed from ${source.name}`);
   return { source, domains, status: "ok" };
 }
