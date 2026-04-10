@@ -13,13 +13,11 @@
 ## 📊 Stats
 
 <!-- STATS_START -->
-
-| Metric             | Value |
-| ------------------ | ----- |
-| Disposable Domains | —     |
-| Sources            | —     |
-| Generated on       | —     |
-
+| Metric | Value |
+|--------|-------|
+| Disposable Domains | 274,143 |
+| Sources | 27 |
+| Generated on | Invalid Date |
 <!-- STATS_END -->
 
 ---
