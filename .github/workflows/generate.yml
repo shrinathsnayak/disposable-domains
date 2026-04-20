@@ -35,7 +35,7 @@ jobs:
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add --force domains.json README.md
-          # Only commit when domains.json or README.md actually changed
+          git add --force domains.json domains.txt README.md
+          # Only commit when generated outputs or README.md actually changed
           git diff --cached --quiet || git commit -m "chore: update domains.json [$(date -u +'%Y-%m-%d')]"
           git push

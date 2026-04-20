@@ -2,7 +2,7 @@ import { writeFile } from "fs/promises";
 
 import { ALLOWLIST_SOURCES, ALLOWED_DOMAINS } from "./allowed-sources";
 import { BLOCKED_SOURCES, MANUAL_BLOCKED_DOMAINS } from "./blocked-sources";
-import { DOMAIN_RE, OUTPUT_FILE } from "./constants";
+import { DOMAIN_RE, OUTPUT_FILE, OUTPUT_TXT_FILE } from "./constants";
 import logger from "./logger";
 import type { Source, SourceStat } from "./types";
 import { fetchSource, runWithConcurrency } from "./utils";
@@ -70,8 +70,9 @@ async function main(): Promise<void> {
   };
 
   await writeFile(OUTPUT_FILE, JSON.stringify(output, null, 2) + "\n", "utf8");
+  await writeFile(OUTPUT_TXT_FILE, sorted.join("\n") + "\n", "utf8");
   logger.info(
-    `✓ Written ${OUTPUT_FILE} — ${sorted.length.toLocaleString()} unique domains from ${BLOCKED_SOURCES.length} sources.`,
+    `✓ Written ${OUTPUT_FILE} and ${OUTPUT_TXT_FILE} — ${sorted.length.toLocaleString()} unique domains from ${BLOCKED_SOURCES.length} sources.`,
   );
   logger.info(`Time taken: ${((Date.now() - startTime) / 1000).toFixed(2)} seconds`);
   logger.info(`Generated at: ${new Date().toISOString()}`);

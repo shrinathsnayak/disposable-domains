@@ -1,3 +1,4 @@
 dist/
 node_modules/
 domains.json
+domains.txt
