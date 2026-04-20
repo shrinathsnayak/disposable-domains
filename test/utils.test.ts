@@ -1,6 +1,15 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
-import { parseLines, parseJsonArray, parseJsonObject, parseJsonObjectKeys, parseDomains } from "../src/utils.js";
+import {
+  parseLines,
+  parseJsonArray,
+  parseJsonObject,
+  parseJsonObjectKeys,
+  parseJsonFakefilterV2,
+  parseDomains,
+  splitCsvLine,
+  parseCsvDomains,
+} from "../src/utils.js";
 
 describe("parseLines", () => {
   it("parses valid domains", () => {
@@ -132,6 +141,74 @@ describe("parseJsonObjectKeys", () => {
   });
 });
 
+describe("splitCsvLine", () => {
+  it("parses quoted fields", () => {
+    assert.deepEqual(splitCsvLine(`"id","domain","mx","ip"`), ["id", "domain", "mx", "ip"]);
+  });
+
+  it("handles escaped quotes inside a field", () => {
+    assert.deepEqual(splitCsvLine(`"a","b""c","d"`), ["a", 'b"c', "d"]);
+  });
+});
+
+describe("parseCsvDomains", () => {
+  it("extracts domains from the named header column", () => {
+    const csv = `"id","domain","mx","ip"
+"1","example.com","mx.example.com","1.2.3.4"
+"2","mail.org","mx.mail.org","5.6.7.8"
+`;
+    assert.deepEqual(parseCsvDomains(csv, "domain"), ["example.com", "mail.org"]);
+  });
+
+  it("matches header column case-insensitively", () => {
+    const csv = `"ID","Domain","mx"
+"1","Example.COM","x"
+`;
+    assert.deepEqual(parseCsvDomains(csv, "domain"), ["example.com"]);
+  });
+
+  it("drops invalid domain values", () => {
+    const csv = `"domain"
+"not a domain"
+"valid.co.uk"
+`;
+    assert.deepEqual(parseCsvDomains(csv), ["valid.co.uk"]);
+  });
+
+  it("returns empty when domain column is missing", () => {
+    assert.deepEqual(parseCsvDomains(`"a","b"\n"1","x"`, "domain"), []);
+  });
+});
+
+describe("parseJsonFakefilterV2", () => {
+  it("collects domain keys and nested hosts keys", () => {
+    const json = JSON.stringify({
+      version: 2,
+      t: 1,
+      domains: {
+        "laoia.com": { providers: ["p"], hosts: { "laoia.com": { firstseen: 1, lastseen: 2 } } },
+        "anonbox.net": {
+          providers: ["anonbox.net"],
+          hosts: {
+            "bnbad.anonbox.net": { firstseen: 1, lastseen: 2 },
+            "cluh4.anonbox.net": { firstseen: 1, lastseen: 2 },
+          },
+        },
+      },
+    });
+    const got = parseJsonFakefilterV2(json).sort();
+    assert.deepEqual(got, ["anonbox.net", "bnbad.anonbox.net", "cluh4.anonbox.net", "laoia.com"]);
+  });
+
+  it("returns empty for malformed JSON", () => {
+    assert.deepEqual(parseJsonFakefilterV2("not json"), []);
+  });
+
+  it("returns empty when domains is missing", () => {
+    assert.deepEqual(parseJsonFakefilterV2("{}"), []);
+  });
+});
+
 describe("parseDomains", () => {
   it("routes lines format to parseLines", () => {
     assert.deepEqual(parseDomains("example.com\n# comment", "lines"), ["example.com"]);
@@ -150,6 +227,21 @@ describe("parseDomains", () => {
       parseDomains('{"example.com":"disposable","mail.org":"freemail"}', "json_object_keys", undefined, undefined, "disposable"),
       ["example.com"],
     );
+  });
+
+  it("routes csv format to parseCsvDomains", () => {
+    const csv = `"domain"
+"example.com"
+`;
+    assert.deepEqual(parseDomains(csv, "csv", undefined, undefined, undefined, "domain"), ["example.com"]);
+  });
+
+  it("routes json_fakefilter_v2 format to parseJsonFakefilterV2", () => {
+    const json = JSON.stringify({
+      version: 2,
+      domains: { "a.example.com": { hosts: { "b.example.com": {} } } },
+    });
+    assert.deepEqual(parseDomains(json, "json_fakefilter_v2").sort(), ["a.example.com", "b.example.com"]);
   });
 
   it("throws on unknown format", () => {

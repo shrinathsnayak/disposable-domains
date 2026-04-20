@@ -1,17 +1,21 @@
 import { writeFile } from "fs/promises";
 
-import { ALLOWLIST_URL, ALLOWED_DOMAINS } from "./allowed-sources";
-import { BLOCKED_SOURCES } from "./blocked-sources";
-import { OUTPUT_FILE } from "./constants";
+import { ALLOWLIST_SOURCES, ALLOWED_DOMAINS } from "./allowed-sources";
+import { BLOCKED_SOURCES, MANUAL_BLOCKED_DOMAINS } from "./blocked-sources";
+import { DOMAIN_RE, OUTPUT_FILE } from "./constants";
 import logger from "./logger";
 import type { Source, SourceStat } from "./types";
-import { fetchSource, fetchText, parseLines, runWithConcurrency } from "./utils";
+import { fetchSource, runWithConcurrency } from "./utils";
 
 async function main(): Promise<void> {
   const startTime = Date.now();
-  logger.info(`Fetching allowlist + ${BLOCKED_SOURCES.length} sources`);
+  logger.info(
+    ALLOWLIST_SOURCES.length > 0
+      ? `Fetching ${ALLOWLIST_SOURCES.length} allowlist source(s) + ${BLOCKED_SOURCES.length} blocklist sources`
+      : `Fetching ${BLOCKED_SOURCES.length} blocklist sources (no allowlist sources)`,
+  );
 
-  const allowlistPromise = fetchText(ALLOWLIST_URL);
+  const allowlistPromises = ALLOWLIST_SOURCES.map((source) => fetchSource(source));
 
   const allDomains = new Set<string>();
   const stats: SourceStat[] = [];
@@ -27,8 +31,28 @@ async function main(): Promise<void> {
     });
   });
 
-  const allowResult = await allowlistPromise;
-  const allowlist = new Set([...(allowResult ? parseLines(allowResult) : []), ...ALLOWED_DOMAINS]);
+  let manualBlockedValid = 0;
+  let manualBlockedInvalid = 0;
+  for (const raw of MANUAL_BLOCKED_DOMAINS) {
+    const d = raw.trim().toLowerCase();
+    if (DOMAIN_RE.test(d)) {
+      allDomains.add(d);
+      manualBlockedValid++;
+    } else {
+      manualBlockedInvalid++;
+    }
+  }
+  if (MANUAL_BLOCKED_DOMAINS.length > 0) {
+    logger.info(
+      `Manual blocked: ${manualBlockedValid.toLocaleString()} valid label(s) merged (${manualBlockedInvalid.toLocaleString()} invalid skipped)`,
+    );
+  }
+
+  const allowResults = await Promise.all(allowlistPromises);
+  const allowlist = new Set<string>(ALLOWED_DOMAINS);
+  for (const { domains } of allowResults) {
+    for (const domain of domains) allowlist.add(domain);
+  }
   logger.info(`Allowlist: ${allowlist.size.toLocaleString()} domains`);
 
   for (const domain of allowlist) allDomains.delete(domain);

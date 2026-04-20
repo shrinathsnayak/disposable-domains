@@ -1,8 +1,10 @@
-// Remote allowlist — domains mistakenly flagged as disposable by upstream sources.
-// Fetched at generation time and merged with ALLOWED_DOMAINS below.
-export const ALLOWLIST_URL =
-  "https://raw.githubusercontent.com/disposable-email-domains/disposable-email-domains/main/allowlist.conf";
+import type { Source } from "./types";
 
-// Add any domains you want to whitelist here.
-// These will never appear in the generated blocked list regardless of upstream sources.
+/**
+ * Optional upstream allowlists — same object shape as `BLOCKED_SOURCES` in `blocked-sources.ts`
+ * (`name`, `url`, `format`, plus format-specific fields). Parsed with the same rules as blocklists.
+ */
+export const ALLOWLIST_SOURCES: Source[] = [];
+
+// Domains to whitelist here; merged with remote allowlists above at generation time.
 export const ALLOWED_DOMAINS: string[] = [];

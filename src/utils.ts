@@ -188,6 +188,111 @@ export function parseJsonObjectKeys(text: string, valueFilter?: string): string[
 }
 
 /**
+ * Parses [7c/fakefilter](https://github.com/7c/fakefilter) `json/data_version2.json`.
+ *
+ * Collects every registrable-domain key under `domains` plus all hostnames listed
+ * under each entry's `hosts` map (PSL layout with punycode hostnames).
+ */
+export function parseJsonFakefilterV2(text: string): string[] {
+  let raw: unknown;
+  try {
+    raw = JSON.parse(text);
+  } catch (err) {
+    logger.error(`JSON parse error: ${err instanceof Error ? err.message : String(err)}`);
+    return [];
+  }
+
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return [];
+  const domains = (raw as Record<string, unknown>).domains;
+  if (!domains || typeof domains !== "object" || Array.isArray(domains)) return [];
+
+  const out = new Set<string>();
+  for (const [domainKey, entry] of Object.entries(domains as Record<string, unknown>)) {
+    const norm = _.trim(domainKey).toLowerCase();
+    if (DOMAIN_RE.test(norm)) out.add(norm);
+
+    if (!entry || typeof entry !== "object" || Array.isArray(entry)) continue;
+    const hosts = (entry as Record<string, unknown>).hosts;
+    if (!hosts || typeof hosts !== "object" || Array.isArray(hosts)) continue;
+    for (const h of Object.keys(hosts as Record<string, unknown>)) {
+      const hn = _.trim(h).toLowerCase();
+      if (DOMAIN_RE.test(hn)) out.add(hn);
+    }
+  }
+  return [...out];
+}
+
+/**
+ * Splits one CSV line into fields (RFC-style double-quote escaping).
+ */
+export function splitCsvLine(line: string): string[] {
+  const fields: string[] = [];
+  let i = 0;
+  const len = line.length;
+  while (i < len) {
+    if (line[i] === '"') {
+      i++;
+      let buf = "";
+      while (i < len) {
+        if (line[i] === '"') {
+          if (i + 1 < len && line[i + 1] === '"') {
+            buf += '"';
+            i += 2;
+            continue;
+          }
+          break;
+        }
+        buf += line[i]!;
+        i++;
+      }
+      fields.push(buf);
+      if (i < len && line[i] === '"') i++;
+    } else {
+      let buf = "";
+      while (i < len && line[i] !== ",") {
+        buf += line[i]!;
+        i++;
+      }
+      fields.push(buf.trim());
+    }
+    if (i < len && line[i] === ",") i++;
+    while (i < len && (line[i] === " " || line[i] === "\t")) i++;
+  }
+  return fields;
+}
+
+/**
+ * Parses CSV with a header row; returns domains from the named column.
+ *
+ * The header row must include `domainColumn` (case-insensitive). Each data
+ * row is split with {@link splitCsvLine}; values are trimmed, lowercased, and
+ * validated with {@link DOMAIN_RE}.
+ */
+export function parseCsvDomains(text: string, domainColumn = "domain"): string[] {
+  const lines = text.split(/\r?\n/).filter((l) => l.trim().length > 0);
+  if (lines.length === 0) return [];
+
+  const headerFields = splitCsvLine(lines[0]!.replace(/^\uFEFF/, ""));
+  const colIdx = headerFields.findIndex(
+    (h) => h.trim().toLowerCase() === domainColumn.toLowerCase(),
+  );
+  if (colIdx < 0) {
+    logger.error(`CSV: no column "${domainColumn}" in header`);
+    return [];
+  }
+
+  const result: string[] = [];
+  for (let r = 1; r < lines.length; r++) {
+    const fields = splitCsvLine(lines[r]!);
+    const raw = fields[colIdx];
+    if (raw === undefined) continue;
+    const domain = _.trim(raw).toLowerCase();
+    if (DOMAIN_RE.test(domain)) result.push(domain);
+  }
+  return result;
+}
+
+/**
  * Dispatches raw text to the correct parser based on the source format.
  *
  * @param text   - Raw file content to parse.
@@ -202,11 +307,14 @@ export function parseDomains(
   key?: string,
   subkey?: string,
   value_filter?: string,
+  csv_domain_column?: string,
 ): string[] {
   if (format === "lines") return parseLines(text);
   if (format === "json_array") return parseJsonArray(text);
   if (format === "json_object") return parseJsonObject(text, key ?? "domains", subkey);
   if (format === "json_object_keys") return parseJsonObjectKeys(text, value_filter);
+  if (format === "csv") return parseCsvDomains(text, csv_domain_column ?? "domain");
+  if (format === "json_fakefilter_v2") return parseJsonFakefilterV2(text);
   throw new Error(`Unknown format: ${format as string}`);
 }
 
@@ -230,7 +338,14 @@ export async function fetchSource(
   if (text === null) {
     return { source, domains: [], status: "error" };
   }
-  const domains = parseDomains(text, source.format, source.key, source.subkey, source.value_filter);
+  const domains = parseDomains(
+    text,
+    source.format,
+    source.key,
+    source.subkey,
+    source.value_filter,
+    source.csv_domain_column,
+  );
   logger.info(`  → ${domains.length.toLocaleString()} domains parsed from ${source.name}`);
   return { source, domains, status: "ok" };
 }

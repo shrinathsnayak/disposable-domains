@@ -8,6 +8,11 @@ export const BLOCKED_SOURCES: Source[] = [
     format: "lines",
   },
   {
+    name: "di/martenson-disposable-email-domains",
+    url: "https://raw.githubusercontent.com/di/martenson-disposable-email-domains/master/disposable_email_blacklist.conf",
+    format: "lines",
+  },
+  {
     name: "disposable/disposable-email-domains (TXT)",
     url: "https://disposable.github.io/disposable-email-domains/domains.txt",
     format: "lines",
@@ -73,6 +78,11 @@ export const BLOCKED_SOURCES: Source[] = [
     format: "lines",
   },
   {
+    name: "elliotjreed/disposable-emails-filter-php",
+    url: "https://raw.githubusercontent.com/elliotjreed/disposable-emails-filter-php/master/list.txt",
+    format: "lines",
+  },
+  {
     name: "disposable/static-disposable-lists (mail-data-hosts-net)",
     url: "https://raw.githubusercontent.com/disposable/static-disposable-lists/master/mail-data-hosts-net.txt",
     format: "lines",
@@ -86,6 +96,11 @@ export const BLOCKED_SOURCES: Source[] = [
     name: "7c/fakefilter",
     url: "https://raw.githubusercontent.com/7c/fakefilter/main/txt/data.txt",
     format: "lines",
+  },
+  {
+    name: "7c/fakefilter (JSON v2)",
+    url: "https://raw.githubusercontent.com/7c/fakefilter/main/json/data_version2.json",
+    format: "json_fakefilter_v2",
   },
   {
     name: "GeroldSetz/emailondeck.com-domains",
@@ -138,4 +153,18 @@ export const BLOCKED_SOURCES: Source[] = [
     url: "https://raw.githubusercontent.com/Propaganistas/Laravel-Disposable-Email/master/domains.json",
     format: "json_array",
   },
+  {
+    name: "DeviceAndBrowserInfo/disposable-email-api",
+    url: "https://deviceandbrowserinfo.com/api/emails/disposable",
+    format: "json_array",
+  },
+  {
+    name: "infiniteloopltd/TempEmailDomainMXRecords",
+    url: "https://raw.githubusercontent.com/infiniteloopltd/TempEmailDomainMXRecords/master/TempEmailDomainMXRecords.csv",
+    format: "csv",
+    csv_domain_column: "domain",
+  },
 ];
+
+/** Domains always merged into the output blocklist (in addition to all upstream sources). Trimmed, lowercased; invalid labels are skipped. Allowlist still removes entries present in `ALLOWED_DOMAINS` / `ALLOWLIST_SOURCES`. */
+export const MANUAL_BLOCKED_DOMAINS: string[] = [];
