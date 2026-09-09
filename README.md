@@ -15,9 +15,9 @@
 <!-- STATS_START -->
 | Metric | Value |
 |--------|-------|
-| Disposable Domains | 289,220 |
+| Disposable Domains | 289,211 |
 | Sources | 32 |
-| Generated on | Tue, 08 Sep 2026 06:59:27 GMT |
+| Generated on | Wed, 09 Sep 2026 07:08:38 GMT |
 <!-- STATS_END -->
 
 ---
