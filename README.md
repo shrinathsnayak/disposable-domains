@@ -13,13 +13,11 @@
 ## 📊 Stats
 
 <!-- STATS_START -->
-
-| Metric             | Value                         |
-| ------------------ | ----------------------------- |
-| Disposable Domains | 310,747                       |
-| Sources            | 32                            |
-| Generated on       | Mon, 23 Nov 2026 10:24:59 GMT |
-
+| Metric | Value |
+|--------|-------|
+| Disposable Domains | 322,873 |
+| Sources | 34 |
+| Generated on | Mon, 23 Nov 2026 19:06:29 GMT |
 <!-- STATS_END -->
 
 ---
@@ -27,9 +25,11 @@
 ## 📰 Latest changes
 
 <!-- CHANGES_START -->
+| Run | Added | Removed | Total |
+| --- | ---: | ---: | ---: |
+| 2026-11-23 19:06 UTC | +12,282 | −156 | 322,873 |
 
-The first change report appears after the next daily run. See [CHANGES.md](CHANGES.md).
-
+[See the full change report →](CHANGES.md)
 <!-- CHANGES_END -->
 
 ---
