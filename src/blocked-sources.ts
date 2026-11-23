@@ -174,6 +174,70 @@ export const BLOCKED_SOURCES: Source[] = [
     url: "https://raw.githubusercontent.com/TempMailDetector/Temporary-Email-Domain-Blocklist/main/domains.txt",
     format: "lines",
   },
+  {
+    name: "castle/disposable-email-domains",
+    url: "https://raw.githubusercontent.com/castle/disposable-email-domains/master/disposable-email-domains.txt",
+    format: "lines",
+  },
+  {
+    name: "jespernissen/disposable-maildomain-list",
+    url: "https://raw.githubusercontent.com/jespernissen/disposable-maildomain-list/master/disposable-maildomain-list.txt",
+    format: "lines",
+  },
+  {
+    name: "disposable/static-disposable-lists (generator-email-hosts)",
+    url: "https://raw.githubusercontent.com/disposable/static-disposable-lists/master/generator-email-hosts.txt",
+    format: "lines",
+  },
+  {
+    name: "inboxes.com",
+    url: "https://inboxes.com/api/v2/domain",
+    format: "json_object",
+    key: "domains",
+    subkey: "qdn",
+  },
+  {
+    name: "temp-mail.io",
+    url: "https://api.internal.temp-mail.io/api/v2/domains",
+    format: "json_object",
+    key: "domains",
+  },
+  {
+    name: "mailforspams.com",
+    url: "https://mailforspams.com/api/v1/domains",
+    format: "json_array",
+  },
+  {
+    name: "maliapi.215.im",
+    url: "https://maliapi.215.im/v1/domains",
+    format: "json_object",
+    key: "data",
+    subkey: "domain",
+  },
+  {
+    name: "fmail.men",
+    url: "https://fmail.men/v1/domains",
+    format: "json_object",
+    key: "domains",
+  },
+  {
+    name: "dev-mail.com",
+    url: "https://dev-mail.com/v1/domains",
+    format: "json_object",
+    key: "domains",
+  },
+  {
+    name: "disposablemail.app",
+    url: "https://disposablemail.app/api/domains",
+    format: "json_object",
+    key: "domains",
+    subkey: "domain",
+  },
+  {
+    name: "adastralab-ai/disposable-email-data",
+    url: "https://raw.githubusercontent.com/adastralab-ai/disposable-email-data/main/custom.json",
+    format: "json_array",
+  },
 ];
 
 /** Domains always merged into the output blocklist (in addition to all upstream sources). Trimmed, lowercased; invalid labels are skipped. Allowlist still removes entries present in `ALLOWED_DOMAINS` / `ALLOWLIST_SOURCES`. */

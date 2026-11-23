@@ -4,7 +4,7 @@
   <img src="cover.svg" alt="disposable-domains cover" width="100%"/>
 </p>
 
-**One unified blocklist of disposable email domains - merged from 34 community sources, deduplicated, and rebuilt every day.**
+**One unified blocklist of disposable email domains - merged from 45 community sources, deduplicated, and rebuilt every day.**
 
 [🚀 Usage](#usage) · [📰 Changes](CHANGES.md) · [📄 Output format](#output-format) · [🌐 Sources](#sources) · [🤝 Contributing](#contributing) · [🛠 Local dev](#local-development)
 
@@ -13,12 +13,14 @@
 ## 📊 Stats
 
 <!-- STATS_START -->
-| Metric | Value |
-|--------|-------|
-| Disposable Domains | 322,875 |
-| Strict list (2+ sources) | 279,119 |
-| Sources | 34 |
-| Generated on | Mon, 23 Nov 2026 19:41:48 GMT |
+
+| Metric                   | Value                         |
+| ------------------------ | ----------------------------- |
+| Disposable Domains       | 322,875                       |
+| Strict list (2+ sources) | 279,119                       |
+| Sources                  | 34                            |
+| Generated on             | Mon, 23 Nov 2026 19:41:48 GMT |
+
 <!-- STATS_END -->
 
 ---
@@ -26,19 +28,21 @@
 ## 📰 Latest changes
 
 <!-- CHANGES_START -->
-| Run | Added | Removed | Total |
-| --- | ---: | ---: | ---: |
-| 2026-11-23 19:41 UTC | +2 | 0 | 322,875 |
-| 2026-11-23 19:06 UTC | +12,282 | −156 | 322,873 |
+
+| Run                  |   Added | Removed |   Total |
+| -------------------- | ------: | ------: | ------: |
+| 2026-11-23 19:41 UTC |      +2 |       0 | 322,875 |
+| 2026-11-23 19:06 UTC | +12,282 |    −156 | 322,873 |
 
 [See the full change report →](CHANGES.md)
+
 <!-- CHANGES_END -->
 
 ---
 
 ## 🛡 Why this exists
 
-Every disposable email blocklist has blind spots. This repo pulls from **34 community-maintained lists**, merges them into a single sorted `domains.json`, and pushes an update every day at 02:00 UTC - so you get broader coverage without managing multiple upstreams yourself.
+Every disposable email blocklist has blind spots. This repo pulls from **45 community-maintained lists**, merges them into a single sorted `domains.json`, and pushes an update every day at 02:00 UTC - so you get broader coverage without managing multiple upstreams yourself.
 
 ---
 
@@ -134,7 +138,7 @@ The `meta.sources` array records the per-source domain count and fetch status, m
 
 Every day at **02:00 UTC**, the GitHub Actions workflow:
 
-1. Fetches all 34 upstream blocklists **concurrently** (capped at 8 in-flight to avoid rate-limiting)
+1. Fetches all 45 upstream blocklists **concurrently** (capped at 8 in-flight to avoid rate-limiting)
 2. Merges the domains and counts, for each one, how many different projects list it (variants of one project count once)
 3. Merges any entries from `MANUAL_BLOCKED_DOMAINS` in [`blocked-sources.ts`](src/blocked-sources.ts) (trimmed, lowercased; invalid hostnames are skipped)
 4. Filters out legitimate providers via `ALLOWED_DOMAINS` and optional allowlist sources (`ALLOWLIST_SOURCES` in [`allowed-sources.ts`](src/allowed-sources.ts)) - same `name` / `url` / `format` shape as blocklists. `ALLOWED_DOMAINS` ships with ~150 major webmail providers and ISPs (Gmail, Outlook, iCloud, Proton, GMX, Mail.ru, QQ, Comcast, …) that some upstream lists mislabel as disposable
@@ -150,7 +154,7 @@ You can also trigger a manual run any time from the Actions tab via `workflow_di
 
 ## 🌐 Sources
 
-34 community lists, merged into one:
+45 community lists, merged into one:
 
 | Source                                                                                                                    | Format             |
 | ------------------------------------------------------------------------------------------------------------------------- | ------------------ |
@@ -188,6 +192,17 @@ You can also trigger a manual run any time from the Actions tab via `workflow_di
 | [infiniteloopltd/TempEmailDomainMXRecords](https://github.com/infiniteloopltd/TempEmailDomainMXRecords)                   | csv                |
 | [tompec/disposable-email-domains](https://github.com/tompec/disposable-email-domains)                                     | json_array         |
 | [TempMailDetector/Temporary-Email-Domain-Blocklist](https://github.com/TempMailDetector/Temporary-Email-Domain-Blocklist) | lines              |
+| [castle/disposable-email-domains](https://github.com/castle/disposable-email-domains)                                     | lines              |
+| [jespernissen/disposable-maildomain-list](https://github.com/jespernissen/disposable-maildomain-list)                     | lines              |
+| [disposable/static-disposable-lists (generator-email-hosts)](https://github.com/disposable/static-disposable-lists)       | lines              |
+| [inboxes.com](https://inboxes.com/api/v2/domain)                                                                          | json_object        |
+| [temp-mail.io](https://api.internal.temp-mail.io/api/v2/domains)                                                          | json_object        |
+| [mailforspams.com](https://mailforspams.com/api/v1/domains)                                                               | json_array         |
+| [maliapi.215.im](https://maliapi.215.im/v1/domains)                                                                       | json_object        |
+| [fmail.men](https://fmail.men/v1/domains)                                                                                 | json_object        |
+| [dev-mail.com](https://dev-mail.com/v1/domains)                                                                           | json_object        |
+| [disposablemail.app](https://disposablemail.app/api/domains)                                                              | json_object        |
+| [adastralab-ai/disposable-email-data](https://github.com/adastralab-ai/disposable-email-data)                             | json_array         |
 
 ---
 
