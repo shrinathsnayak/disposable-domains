@@ -1,37 +1,14 @@
 {
   "meta": {
-    "generated_on": "2026-11-23T19:06:29.217Z",
-    "total": 322873,
+    "generated_on": "2026-11-23T19:41:48.209Z",
+    "total": 322875,
+    "strict_total": 279119,
     "source_count": 34,
     "sources": [
       {
         "name": "disposable-email-domains/disposable-email-domains",
         "url": "https://raw.githubusercontent.com/disposable-email-domains/disposable-email-domains/main/disposable_email_blocklist.conf",
         "raw_count": 10455,
-        "status": "ok"
-      },
-      {
-        "name": "flotwig/disposable-email-addresses",
-        "url": "https://raw.githubusercontent.com/flotwig/disposable-email-addresses/master/domains.txt",
-        "raw_count": 1034,
-        "status": "ok"
-      },
-      {
-        "name": "FGRibreau/mailchecker",
-        "url": "https://raw.githubusercontent.com/FGRibreau/mailchecker/master/list.txt",
-        "raw_count": 57701,
-        "status": "ok"
-      },
-      {
-        "name": "wesbos/burner-email-providers",
-        "url": "https://raw.githubusercontent.com/wesbos/burner-email-providers/master/emails.txt",
-        "raw_count": 27277,
-        "status": "ok"
-      },
-      {
-        "name": "daisy1754/jp-disposable-emails",
-        "url": "https://raw.githubusercontent.com/daisy1754/jp-disposable-emails/master/list.txt",
-        "raw_count": 28,
         "status": "ok"
       },
       {
@@ -47,15 +24,27 @@
         "status": "ok"
       },
       {
-        "name": "disposable/disposable-email-domains (MX-verified)",
-        "url": "https://disposable.github.io/disposable-email-domains/domains_mx.txt",
-        "raw_count": 61726,
+        "name": "daisy1754/jp-disposable-emails",
+        "url": "https://raw.githubusercontent.com/daisy1754/jp-disposable-emails/master/list.txt",
+        "raw_count": 28,
         "status": "ok"
       },
       {
-        "name": "disposable/disposable-email-domains (TXT)",
-        "url": "https://disposable.github.io/disposable-email-domains/domains.txt",
-        "raw_count": 109208,
+        "name": "wesbos/burner-email-providers",
+        "url": "https://raw.githubusercontent.com/wesbos/burner-email-providers/master/emails.txt",
+        "raw_count": 27277,
+        "status": "ok"
+      },
+      {
+        "name": "flotwig/disposable-email-addresses",
+        "url": "https://raw.githubusercontent.com/flotwig/disposable-email-addresses/master/domains.txt",
+        "raw_count": 1034,
+        "status": "ok"
+      },
+      {
+        "name": "FGRibreau/mailchecker",
+        "url": "https://raw.githubusercontent.com/FGRibreau/mailchecker/master/list.txt",
+        "raw_count": 57701,
         "status": "ok"
       },
       {
@@ -65,45 +54,15 @@
         "status": "ok"
       },
       {
-        "name": "ivolo/disposable-email-domains",
-        "url": "https://raw.githubusercontent.com/ivolo/disposable-email-domains/master/index.json",
-        "raw_count": 121557,
+        "name": "disposable/disposable-email-domains (MX-verified)",
+        "url": "https://disposable.github.io/disposable-email-domains/domains_mx.txt",
+        "raw_count": 61726,
         "status": "ok"
       },
       {
-        "name": "disposable/static-disposable-lists (mail-data-hosts-net)",
-        "url": "https://raw.githubusercontent.com/disposable/static-disposable-lists/master/mail-data-hosts-net.txt",
-        "raw_count": 1953,
-        "status": "ok"
-      },
-      {
-        "name": "disposable/static-disposable-lists (manual)",
-        "url": "https://raw.githubusercontent.com/disposable/static-disposable-lists/master/manual.txt",
-        "raw_count": 399,
-        "status": "ok"
-      },
-      {
-        "name": "elliotjreed/disposable-emails-filter-php",
-        "url": "https://raw.githubusercontent.com/elliotjreed/disposable-emails-filter-php/master/list.txt",
-        "raw_count": 10455,
-        "status": "ok"
-      },
-      {
-        "name": "7c/fakefilter",
-        "url": "https://raw.githubusercontent.com/7c/fakefilter/main/txt/data.txt",
-        "raw_count": 10692,
-        "status": "ok"
-      },
-      {
-        "name": "groundcat/disposable-email-domain-list",
-        "url": "https://raw.githubusercontent.com/groundcat/disposable-email-domain-list/master/domains.txt",
-        "raw_count": 22849,
-        "status": "ok"
-      },
-      {
-        "name": "amieiro/disposable-email-domains",
-        "url": "https://raw.githubusercontent.com/amieiro/disposable-email-domains/master/denyDomains.txt",
-        "raw_count": 232664,
+        "name": "disposable/disposable-email-domains (TXT)",
+        "url": "https://disposable.github.io/disposable-email-domains/domains.txt",
+        "raw_count": 109208,
         "status": "ok"
       },
       {
@@ -119,15 +78,39 @@
         "status": "ok"
       },
       {
+        "name": "disposable/static-disposable-lists (mail-data-hosts-net)",
+        "url": "https://raw.githubusercontent.com/disposable/static-disposable-lists/master/mail-data-hosts-net.txt",
+        "raw_count": 1953,
+        "status": "ok"
+      },
+      {
+        "name": "elliotjreed/disposable-emails-filter-php",
+        "url": "https://raw.githubusercontent.com/elliotjreed/disposable-emails-filter-php/master/list.txt",
+        "raw_count": 10455,
+        "status": "ok"
+      },
+      {
+        "name": "ivolo/disposable-email-domains",
+        "url": "https://raw.githubusercontent.com/ivolo/disposable-email-domains/master/index.json",
+        "raw_count": 121557,
+        "status": "ok"
+      },
+      {
+        "name": "disposable/static-disposable-lists (manual)",
+        "url": "https://raw.githubusercontent.com/disposable/static-disposable-lists/master/manual.txt",
+        "raw_count": 399,
+        "status": "ok"
+      },
+      {
         "name": "GeroldSetz/emailondeck.com-domains",
         "url": "https://raw.githubusercontent.com/GeroldSetz/emailondeck.com-domains/refs/heads/master/emailondeck.com_domains_from_bdea.cc.txt",
         "raw_count": 1121,
         "status": "ok"
       },
       {
-        "name": "romainsimon/emailvalid",
-        "url": "https://raw.githubusercontent.com/romainsimon/emailvalid/refs/heads/master/domains.json",
-        "raw_count": 10229,
+        "name": "7c/fakefilter",
+        "url": "https://raw.githubusercontent.com/7c/fakefilter/main/txt/data.txt",
+        "raw_count": 10692,
         "status": "ok"
       },
       {
@@ -137,15 +120,9 @@
         "status": "ok"
       },
       {
-        "name": "andreis/disposable-email-domains",
-        "url": "https://raw.githubusercontent.com/andreis/disposable-email-domains/master/domains.txt",
-        "raw_count": 109208,
-        "status": "ok"
-      },
-      {
-        "name": "sublime-security/static-files",
-        "url": "https://raw.githubusercontent.com/sublime-security/static-files/master/disposable_email_providers.txt",
-        "raw_count": 10524,
+        "name": "groundcat/disposable-email-domain-list",
+        "url": "https://raw.githubusercontent.com/groundcat/disposable-email-domain-list/master/domains.txt",
+        "raw_count": 22849,
         "status": "ok"
       },
       {
@@ -167,9 +144,21 @@
         "status": "ok"
       },
       {
-        "name": "doodad-labs/disposable-email-domains",
-        "url": "https://raw.githubusercontent.com/doodad-labs/disposable-email-domains/main/data/domains.txt",
-        "raw_count": 291885,
+        "name": "romainsimon/emailvalid",
+        "url": "https://raw.githubusercontent.com/romainsimon/emailvalid/refs/heads/master/domains.json",
+        "raw_count": 10229,
+        "status": "ok"
+      },
+      {
+        "name": "sublime-security/static-files",
+        "url": "https://raw.githubusercontent.com/sublime-security/static-files/master/disposable_email_providers.txt",
+        "raw_count": 10524,
+        "status": "ok"
+      },
+      {
+        "name": "amieiro/disposable-email-domains",
+        "url": "https://raw.githubusercontent.com/amieiro/disposable-email-domains/master/denyDomains.txt",
+        "raw_count": 232664,
         "status": "ok"
       },
       {
@@ -179,15 +168,15 @@
         "status": "ok"
       },
       {
-        "name": "Propaganistas/Laravel-Disposable-Email",
-        "url": "https://raw.githubusercontent.com/Propaganistas/Laravel-Disposable-Email/master/domains.json",
-        "raw_count": 98626,
+        "name": "andreis/disposable-email-domains",
+        "url": "https://raw.githubusercontent.com/andreis/disposable-email-domains/master/domains.txt",
+        "raw_count": 109208,
         "status": "ok"
       },
       {
-        "name": "infiniteloopltd/TempEmailDomainMXRecords",
-        "url": "https://raw.githubusercontent.com/infiniteloopltd/TempEmailDomainMXRecords/master/TempEmailDomainMXRecords.csv",
-        "raw_count": 35558,
+        "name": "Propaganistas/Laravel-Disposable-Email",
+        "url": "https://raw.githubusercontent.com/Propaganistas/Laravel-Disposable-Email/master/domains.json",
+        "raw_count": 98626,
         "status": "ok"
       },
       {
@@ -197,15 +186,27 @@
         "status": "ok"
       },
       {
+        "name": "infiniteloopltd/TempEmailDomainMXRecords",
+        "url": "https://raw.githubusercontent.com/infiniteloopltd/TempEmailDomainMXRecords/master/TempEmailDomainMXRecords.csv",
+        "raw_count": 35558,
+        "status": "ok"
+      },
+      {
         "name": "tompec/disposable-email-domains",
         "url": "https://raw.githubusercontent.com/tompec/disposable-email-domains/main/index.json",
         "raw_count": 136289,
         "status": "ok"
       },
       {
+        "name": "doodad-labs/disposable-email-domains",
+        "url": "https://raw.githubusercontent.com/doodad-labs/disposable-email-domains/main/data/domains.txt",
+        "raw_count": 291885,
+        "status": "ok"
+      },
+      {
         "name": "DeviceAndBrowserInfo/disposable-email-api",
         "url": "https://deviceandbrowserinfo.com/api/emails/disposable",
-        "raw_count": 50664,
+        "raw_count": 50666,
         "status": "ok"
       }
     ]
@@ -29740,6 +29741,7 @@
     "ae390.689be.71171171.xyz",
     "ae3b8.85c9d.71171171.xyz",
     "ae4aeybpvx.mailbo.store",
+    "ae4ozr.tmpmail.net",
     "ae5gshik.niukana.sbs",
     "ae5xvcml.zuy.kavmre230.biz.id",
     "ae68790.xyz",
@@ -209709,6 +209711,7 @@
     "ogham.net",
     "oghilj.com",
     "oghm.com",
+    "ogicur.teml.net",
     "oginski.ru",
     "oginskiy.ru",
     "oginskji.ru",
