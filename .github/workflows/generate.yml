@@ -4,6 +4,11 @@ on:
   schedule:
     - cron: "0 2 * * *"
   workflow_dispatch: # allow manual trigger
+    inputs:
+      allow_large_changes:
+        description: "Publish even if the list shrinks sharply or a source grows sharply (use after reviewing the failed run)"
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -13,8 +18,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # The write token is not stored in .git/config; only the push step below receives it.
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+        with:
+          persist-credentials: false
 
       - name: Set up Node.js
         uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f  # v6.3.0
@@ -22,20 +30,30 @@ jobs:
           node-version: "22"
           cache: "npm"
 
+      # --ignore-scripts: no dependency install scripts run in this job (it only needs tsc + node).
+      # --no-audit: the registry audit call was 20–40s of a ~50s job; vulnerability checks belong in Dependabot, not the daily build.
       - name: Install dependencies
-        run: npm ci
+        run: npm ci --ignore-scripts --no-audit --no-fund --prefer-offline
 
       - name: Generate domains.json
         run: npm run generate:prod
+        env:
+          ALLOW_LARGE_CHANGES: ${{ inputs.allow_large_changes && '1' || '' }}
 
       - name: Update README stats
         run: npm run update-readme:prod
 
       - name: Commit & push if changed
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add --force domains.json domains.txt README.md
-          # Only commit when generated outputs or README.md actually changed
-          git diff --cached --quiet || git commit -m "chore: update domains.json [$(date -u +'%Y-%m-%d')]"
-          git push
+          git add --force domains.json domains.txt README.md CHANGES.md
+          # Only commit when generated outputs, README.md or CHANGES.md actually changed
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          git commit -m "chore: update domains.json [$(date -u +'%Y-%m-%d')]"
+          git push "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" "HEAD:${GITHUB_REF_NAME}"

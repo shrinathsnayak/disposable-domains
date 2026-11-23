@@ -164,6 +164,16 @@ export const BLOCKED_SOURCES: Source[] = [
     format: "csv",
     csv_domain_column: "domain",
   },
+  {
+    name: "tompec/disposable-email-domains",
+    url: "https://raw.githubusercontent.com/tompec/disposable-email-domains/main/index.json",
+    format: "json_array",
+  },
+  {
+    name: "TempMailDetector/Temporary-Email-Domain-Blocklist",
+    url: "https://raw.githubusercontent.com/TempMailDetector/Temporary-Email-Domain-Blocklist/main/domains.txt",
+    format: "lines",
+  },
 ];
 
 /** Domains always merged into the output blocklist (in addition to all upstream sources). Trimmed, lowercased; invalid labels are skipped. Allowlist still removes entries present in `ALLOWED_DOMAINS` / `ALLOWLIST_SOURCES`. */

@@ -7,6 +7,7 @@ import {
   DOMAIN_RE,
   COMMENT_PREFIXES,
   CONCURRENCY_LIMIT,
+  MIN_TLD_COUNT,
 } from "./constants";
 import logger from "./logger";
 
@@ -115,8 +116,8 @@ export function parseJsonArray(text: string): string[] {
  * Parses a JSON object where a named key holds the domain array.
  *
  * Validated with zod. Handles two shapes:
- * - Flat: `{ "<key>": ["domain.com", ...] }` — elements are strings.
- * - Nested: `{ "<key>": [{ "<subkey>": "domain.com" }, ...] }` — elements are
+ * - Flat: `{ "<key>": ["domain.com", ...] }` - elements are strings.
+ * - Nested: `{ "<key>": [{ "<subkey>": "domain.com" }, ...] }` - elements are
  *   objects; `subkey` names the property holding the domain string.
  *
  * @param text   - Raw JSON content.
@@ -157,7 +158,7 @@ export function parseJsonObject(text: string, key: string, subkey?: string): str
 
 /**
  * Parses a JSON object where domain names are keys and classification strings
- * are values — e.g. `{ "mailinator.com": "disposable", "gmail.com": "freemail" }`.
+ * are values - e.g. `{ "mailinator.com": "disposable", "gmail.com": "freemail" }`.
  *
  * When `valueFilter` is provided, only domains whose value strictly equals
  * that string are included (e.g. `"disposable"` to exclude freemail entries).
@@ -322,7 +323,7 @@ export function parseDomains(
  * Fetches and parses a single domain source.
  *
  * Combines {@link fetchText} and {@link parseDomains} into a single
- * async operation. Always resolves — never rejects — so it is safe to use
+ * async operation. Always resolves - never rejects - so it is safe to use
  * inside `Promise.all`. On fetch failure the returned `domains` array is
  * empty and `status` is `"error"`.
  *
@@ -348,4 +349,42 @@ export async function fetchSource(
   );
   logger.info(`  → ${domains.length.toLocaleString()} domains parsed from ${source.name}`);
   return { source, domains, status: "ok" };
+}
+
+/**
+ * Parses the IANA root-zone TLD list (one TLD per line, `#` comments).
+ *
+ * @returns The lowercased TLDs, or `null` when the list looks incomplete
+ *          (fewer than {@link MIN_TLD_COUNT} entries or no `com`), so a bad
+ *          fetch can never wipe out valid domains.
+ */
+export function parseTldList(text: string): Set<string> | null {
+  const tlds = new Set<string>();
+  for (const line of text.split(/\r?\n/)) {
+    const tld = line.trim().toLowerCase();
+    if (tld && !tld.startsWith("#")) tlds.add(tld);
+  }
+  return tlds.size >= MIN_TLD_COUNT && tlds.has("com") ? tlds : null;
+}
+
+/**
+ * Produces the final sorted blocklist: removes allowlisted domains and, when
+ * `tlds` is given, domains whose TLD is not in the root zone.
+ */
+export function finalizeDomains(
+  domains: Iterable<string>,
+  allowlist: ReadonlySet<string>,
+  tlds: ReadonlySet<string> | null,
+): { domains: string[]; unknownTldCount: number } {
+  const kept: string[] = [];
+  let unknownTldCount = 0;
+  for (const domain of domains) {
+    if (allowlist.has(domain)) continue;
+    if (tlds && !tlds.has(domain.slice(domain.lastIndexOf(".") + 1))) {
+      unknownTldCount++;
+      continue;
+    }
+    kept.push(domain);
+  }
+  return { domains: kept.sort(), unknownTldCount };
 }

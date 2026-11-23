@@ -11,8 +11,9 @@ jobs:
       contents: read
       pull-requests: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4.4.0
         with:
           fetch-depth: 0
 
-      - uses: Rosentic/rosentic-action@v1
+      # Third-party action: pinned to an exact commit so a moved tag can't swap in different code.
+      - uses: Rosentic/rosentic-action@d6110921d2aa7fb300f85af2628d053fa7fe278c  # v1

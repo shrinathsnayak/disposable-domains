@@ -4,27 +4,39 @@
   <img src="cover.svg" alt="disposable-domains cover" width="100%"/>
 </p>
 
-**One unified blocklist of disposable email domains — merged from 31 community sources, deduplicated, and rebuilt every day.**
+**One unified blocklist of disposable email domains - merged from 34 community sources, deduplicated, and rebuilt every day.**
 
-[🚀 Usage](#usage) · [📄 Output format](#output-format) · [🌐 Sources](#sources) · [🤝 Contributing](#contributing) · [🛠 Local dev](#local-development)
+[🚀 Usage](#usage) · [📰 Changes](CHANGES.md) · [📄 Output format](#output-format) · [🌐 Sources](#sources) · [🤝 Contributing](#contributing) · [🛠 Local dev](#local-development)
 
 ---
 
 ## 📊 Stats
 
 <!-- STATS_START -->
-| Metric | Value |
-|--------|-------|
-| Disposable Domains | 310,747 |
-| Sources | 32 |
-| Generated on | Mon, 23 Nov 2026 10:24:59 GMT |
+
+| Metric             | Value                         |
+| ------------------ | ----------------------------- |
+| Disposable Domains | 310,747                       |
+| Sources            | 32                            |
+| Generated on       | Mon, 23 Nov 2026 10:24:59 GMT |
+
 <!-- STATS_END -->
+
+---
+
+## 📰 Latest changes
+
+<!-- CHANGES_START -->
+
+The first change report appears after the next daily run. See [CHANGES.md](CHANGES.md).
+
+<!-- CHANGES_END -->
 
 ---
 
 ## 🛡 Why this exists
 
-Every disposable email blocklist has blind spots. This repo pulls from **31 community-maintained lists**, merges them into a single sorted `domains.json`, and pushes an update every day at 02:00 UTC — so you get broader coverage without managing multiple upstreams yourself.
+Every disposable email blocklist has blind spots. This repo pulls from **34 community-maintained lists**, merges them into a single sorted `domains.json`, and pushes an update every day at 02:00 UTC - so you get broader coverage without managing multiple upstreams yourself.
 
 ---
 
@@ -78,7 +90,7 @@ curl -s https://cdn.jsdelivr.net/gh/shrinathsnayak/disposable-domains/domains.js
 
 ## 📄 Output format
 
-`domains.json` has two top-level keys — `meta` for auditing and `domains` for lookups:
+`domains.json` has two top-level keys - `meta` for auditing and `domains` for lookups:
 
 ```json
 {
@@ -107,12 +119,15 @@ The `meta.sources` array records the per-source domain count and fetch status, m
 
 Every day at **02:00 UTC**, the GitHub Actions workflow:
 
-1. Fetches all 31 upstream blocklists **concurrently** (capped at 8 in-flight to avoid rate-limiting)
-2. Merges domains into a `Set` as each source resolves — no waiting for the full batch
+1. Fetches all 34 upstream blocklists **concurrently** (capped at 8 in-flight to avoid rate-limiting)
+2. Merges domains into a `Set` as each source resolves - no waiting for the full batch
 3. Merges any entries from `MANUAL_BLOCKED_DOMAINS` in [`blocked-sources.ts`](src/blocked-sources.ts) (trimmed, lowercased; invalid hostnames are skipped)
-4. Filters out legitimate providers via `ALLOWED_DOMAINS` and optional allowlist sources (`ALLOWLIST_SOURCES` in [`allowed-sources.ts`](src/allowed-sources.ts)) — same `name` / `url` / `format` shape as blocklists
-5. Writes a single sorted `domains.json` with full source stats
-6. Commits the result **only if the content actually changed**
+4. Filters out legitimate providers via `ALLOWED_DOMAINS` and optional allowlist sources (`ALLOWLIST_SOURCES` in [`allowed-sources.ts`](src/allowed-sources.ts)) - same `name` / `url` / `format` shape as blocklists. `ALLOWED_DOMAINS` ships with ~150 major webmail providers and ISPs (Gmail, Outlook, iCloud, Proton, GMX, Mail.ru, QQ, Comcast, …) that some upstream lists mislabel as disposable
+5. Drops domains whose TLD is not in the [IANA root zone](https://data.iana.org/TLD/tlds-alpha-by-domain.txt) (typos like `gmail.con`, IP addresses, scraped junk). If the IANA list can't be fetched, this step is skipped rather than failing the run
+6. Refuses to publish if the run looks like a broken or poisoned upstream: the total drops by more than 5%, or a single source grows by more than 50% (and at least 1,000 domains) since the previous run. The job fails and nothing is written; after reviewing, re-run it from the Actions tab with **allow_large_changes** checked (or set `ALLOW_LARGE_CHANGES=1` locally)
+7. Writes a single sorted `domains.json` with full source stats
+8. Compares the result with the previous run and, if anything changed, adds an entry to [`CHANGES.md`](CHANGES.md) (how many domains were added and removed; last 30 runs kept) and refreshes the **Latest changes** preview above
+9. Commits the result **only if the content actually changed**
 
 You can also trigger a manual run any time from the Actions tab via `workflow_dispatch`.
 
@@ -120,11 +135,12 @@ You can also trigger a manual run any time from the Actions tab via `workflow_di
 
 ## 🌐 Sources
 
-31 community lists, merged into one:
+34 community lists, merged into one:
 
 | Source                                                                                                                    | Format             |
 | ------------------------------------------------------------------------------------------------------------------------- | ------------------ |
 | [disposable-email-domains/disposable-email-domains](https://github.com/disposable-email-domains/disposable-email-domains) | lines              |
+| [di/martenson-disposable-email-domains](https://github.com/di/martenson-disposable-email-domains)                         | lines              |
 | [disposable/disposable-email-domains (TXT)](https://disposable.github.io/disposable-email-domains/domains.txt)            | lines              |
 | [disposable/disposable-email-domains (MX-verified)](https://disposable.github.io/disposable-email-domains/domains_mx.txt) | lines              |
 | [ivolo/disposable-email-domains](https://github.com/ivolo/disposable-email-domains)                                       | json_array         |
@@ -155,6 +171,8 @@ You can also trigger a manual run any time from the Actions tab via `workflow_di
 | [Propaganistas/Laravel-Disposable-Email](https://github.com/Propaganistas/Laravel-Disposable-Email)                       | json_array         |
 | [DeviceAndBrowserInfo](https://deviceandbrowserinfo.com/) (disposable email API)                                          | json_array         |
 | [infiniteloopltd/TempEmailDomainMXRecords](https://github.com/infiniteloopltd/TempEmailDomainMXRecords)                   | csv                |
+| [tompec/disposable-email-domains](https://github.com/tompec/disposable-email-domains)                                     | json_array         |
+| [TempMailDetector/Temporary-Email-Domain-Blocklist](https://github.com/TempMailDetector/Temporary-Email-Domain-Blocklist) | lines              |
 
 ---
 
@@ -176,7 +194,7 @@ You can also trigger a manual run any time from the Actions tab via `workflow_di
 
 | Format               | Description                                                                                       |
 | -------------------- | ------------------------------------------------------------------------------------------------- |
-| `lines`              | One domain per line — `#`, `//`, and `;` comment prefixes are stripped                            |
+| `lines`              | One domain per line - `#`, `//`, and `;` comment prefixes are stripped                            |
 | `json_array`         | Top-level JSON array of domain strings                                                            |
 | `json_object`        | JSON object with a named array of domains (use `key` / optional `subkey`)                         |
 | `json_object_keys`   | JSON object where domain names are the keys                                                       |
@@ -187,10 +205,14 @@ You can also trigger a manual run any time from the Actions tab via `workflow_di
 
 ### ✅ Whitelisting a domain
 
-To prevent a domain from ever appearing in the output, add it to `ALLOWED_DOMAINS` in [`src/allowed-sources.ts`](src/allowed-sources.ts):
+To prevent a domain from ever appearing in the output, add it to `ALLOWED_DOMAINS` in [`src/allowed-sources.ts`](src/allowed-sources.ts) (keep the list sorted):
 
 ```ts
-export const ALLOWED_DOMAINS: string[] = ["example.com"];
+export const ALLOWED_DOMAINS: string[] = [
+  // …
+  "example.com",
+  // …
+];
 ```
 
 This is merged with domains from every entry in `ALLOWLIST_SOURCES` at generation time (each uses the same formats as blocklists).
@@ -220,13 +242,15 @@ disposable-domains/
 │   ├── logger.ts            winston logger (timestamp + colorized level)
 │   ├── types.ts             TypeScript interfaces (Source, SourceStat)
 │   ├── utils.ts             fetch, parse, and concurrency helpers
+│   ├── changes.ts           daily change report + README preview rendering
 │   └── generate.ts          orchestration entry point
 ├── test/
 │   └── utils.test.ts        unit tests for parse helpers
 ├── .github/workflows/
-│   ├── generate.yml         daily cron — regenerates and commits domains.json
+│   ├── generate.yml         daily cron - regenerates and commits domains.json
 │   └── test.yml             runs on every PR
 ├── domains.json
+├── CHANGES.md               daily change report (generated)
 └── README.md
 ```
 
@@ -248,7 +272,7 @@ npm run build      # compile to dist/
 
 ## 📜 License
 
-MIT — see [LICENSE](LICENSE).
+MIT - see [LICENSE](LICENSE).
 
 ---
 
