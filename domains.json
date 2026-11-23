@@ -1,7 +1,7 @@
 {
   "meta": {
-    "generated_on": "2026-11-22T09:27:29.477Z",
-    "total": 310719,
+    "generated_on": "2026-11-23T10:24:59.226Z",
+    "total": 310747,
     "source_count": 32,
     "sources": [
       {
@@ -13,7 +13,13 @@
       {
         "name": "disposable/disposable-email-domains (MX-verified)",
         "url": "https://disposable.github.io/disposable-email-domains/domains_mx.txt",
-        "raw_count": 61640,
+        "raw_count": 61726,
+        "status": "ok"
+      },
+      {
+        "name": "daisy1754/jp-disposable-emails",
+        "url": "https://raw.githubusercontent.com/daisy1754/jp-disposable-emails/master/list.txt",
+        "raw_count": 28,
         "status": "ok"
       },
       {
@@ -29,27 +35,21 @@
         "status": "ok"
       },
       {
-        "name": "wesbos/burner-email-providers",
-        "url": "https://raw.githubusercontent.com/wesbos/burner-email-providers/master/emails.txt",
-        "raw_count": 27277,
-        "status": "ok"
-      },
-      {
-        "name": "daisy1754/jp-disposable-emails",
-        "url": "https://raw.githubusercontent.com/daisy1754/jp-disposable-emails/master/list.txt",
-        "raw_count": 28,
-        "status": "ok"
-      },
-      {
         "name": "unkn0w/disposable-email-domain-list",
         "url": "https://raw.githubusercontent.com/unkn0w/disposable-email-domain-list/main/domains.txt",
         "raw_count": 3616,
         "status": "ok"
       },
       {
-        "name": "disposable/disposable-email-domains (TXT)",
-        "url": "https://disposable.github.io/disposable-email-domains/domains.txt",
-        "raw_count": 109114,
+        "name": "wesbos/burner-email-providers",
+        "url": "https://raw.githubusercontent.com/wesbos/burner-email-providers/master/emails.txt",
+        "raw_count": 27277,
+        "status": "ok"
+      },
+      {
+        "name": "FGRibreau/mailchecker",
+        "url": "https://raw.githubusercontent.com/FGRibreau/mailchecker/master/list.txt",
+        "raw_count": 57701,
         "status": "ok"
       },
       {
@@ -65,15 +65,33 @@
         "status": "ok"
       },
       {
+        "name": "adamloving/disposable-email-domains",
+        "url": "https://gist.githubusercontent.com/adamloving/4401361/raw/",
+        "raw_count": 478,
+        "status": "ok"
+      },
+      {
+        "name": "jamesonev/disposable-email-domains",
+        "url": "https://gist.githubusercontent.com/jamesonev/7e188c35fd5ca754c970e3a1caf045ef/raw/",
+        "raw_count": 387,
+        "status": "ok"
+      },
+      {
         "name": "disposable/static-disposable-lists (mail-data-hosts-net)",
         "url": "https://raw.githubusercontent.com/disposable/static-disposable-lists/master/mail-data-hosts-net.txt",
         "raw_count": 1953,
         "status": "ok"
       },
       {
-        "name": "amieiro/disposable-email-domains",
-        "url": "https://raw.githubusercontent.com/amieiro/disposable-email-domains/master/denyDomains.txt",
-        "raw_count": 232617,
+        "name": "elliotjreed/disposable-emails-filter-php",
+        "url": "https://raw.githubusercontent.com/elliotjreed/disposable-emails-filter-php/master/list.txt",
+        "raw_count": 10455,
+        "status": "ok"
+      },
+      {
+        "name": "disposable/disposable-email-domains (TXT)",
+        "url": "https://disposable.github.io/disposable-email-domains/domains.txt",
+        "raw_count": 109208,
         "status": "ok"
       },
       {
@@ -83,33 +101,9 @@
         "status": "ok"
       },
       {
-        "name": "elliotjreed/disposable-emails-filter-php",
-        "url": "https://raw.githubusercontent.com/elliotjreed/disposable-emails-filter-php/master/list.txt",
-        "raw_count": 10400,
-        "status": "ok"
-      },
-      {
-        "name": "adamloving/disposable-email-domains",
-        "url": "https://gist.githubusercontent.com/adamloving/4401361/raw/",
-        "raw_count": 478,
-        "status": "ok"
-      },
-      {
         "name": "7c/fakefilter",
         "url": "https://raw.githubusercontent.com/7c/fakefilter/main/txt/data.txt",
-        "raw_count": 10697,
-        "status": "ok"
-      },
-      {
-        "name": "FGRibreau/mailchecker",
-        "url": "https://raw.githubusercontent.com/FGRibreau/mailchecker/master/list.txt",
-        "raw_count": 57701,
-        "status": "ok"
-      },
-      {
-        "name": "groundcat/disposable-email-domain-list",
-        "url": "https://raw.githubusercontent.com/groundcat/disposable-email-domain-list/master/domains.txt",
-        "raw_count": 25378,
+        "raw_count": 10692,
         "status": "ok"
       },
       {
@@ -121,25 +115,31 @@
       {
         "name": "7c/fakefilter (JSON v2)",
         "url": "https://raw.githubusercontent.com/7c/fakefilter/main/json/data_version2.json",
-        "raw_count": 4791,
+        "raw_count": 4790,
+        "status": "ok"
+      },
+      {
+        "name": "groundcat/disposable-email-domain-list",
+        "url": "https://raw.githubusercontent.com/groundcat/disposable-email-domain-list/master/domains.txt",
+        "raw_count": 25378,
+        "status": "ok"
+      },
+      {
+        "name": "stopforumspam/toxic_domains",
+        "url": "https://www.stopforumspam.com/downloads/toxic_domains_whole.txt",
+        "raw_count": 87169,
+        "status": "ok"
+      },
+      {
+        "name": "amieiro/disposable-email-domains",
+        "url": "https://raw.githubusercontent.com/amieiro/disposable-email-domains/master/denyDomains.txt",
+        "raw_count": 232625,
         "status": "ok"
       },
       {
         "name": "TheDahoom/disposable-email",
         "url": "https://raw.githubusercontent.com/TheDahoom/disposable-email/main/blacklist.txt",
         "raw_count": 18,
-        "status": "ok"
-      },
-      {
-        "name": "romainsimon/emailvalid",
-        "url": "https://raw.githubusercontent.com/romainsimon/emailvalid/refs/heads/master/domains.json",
-        "raw_count": 10229,
-        "status": "ok"
-      },
-      {
-        "name": "jamesonev/disposable-email-domains",
-        "url": "https://gist.githubusercontent.com/jamesonev/7e188c35fd5ca754c970e3a1caf045ef/raw/",
-        "raw_count": 387,
         "status": "ok"
       },
       {
@@ -155,15 +155,21 @@
         "status": "ok"
       },
       {
-        "name": "kslr/disposable-email-domains",
-        "url": "https://raw.githubusercontent.com/kslr/disposable-email-domains/master/list.txt",
-        "raw_count": 148579,
+        "name": "romainsimon/emailvalid",
+        "url": "https://raw.githubusercontent.com/romainsimon/emailvalid/refs/heads/master/domains.json",
+        "raw_count": 10229,
         "status": "ok"
       },
       {
         "name": "andreis/disposable-email-domains",
         "url": "https://raw.githubusercontent.com/andreis/disposable-email-domains/master/domains.txt",
-        "raw_count": 109114,
+        "raw_count": 109208,
+        "status": "ok"
+      },
+      {
+        "name": "kslr/disposable-email-domains",
+        "url": "https://raw.githubusercontent.com/kslr/disposable-email-domains/master/list.txt",
+        "raw_count": 148659,
         "status": "ok"
       },
       {
@@ -173,27 +179,21 @@
         "status": "ok"
       },
       {
-        "name": "doodad-labs/disposable-email-domains",
-        "url": "https://raw.githubusercontent.com/doodad-labs/disposable-email-domains/main/data/domains.txt",
-        "raw_count": 291805,
-        "status": "ok"
-      },
-      {
         "name": "infiniteloopltd/TempEmailDomainMXRecords",
         "url": "https://raw.githubusercontent.com/infiniteloopltd/TempEmailDomainMXRecords/master/TempEmailDomainMXRecords.csv",
         "raw_count": 35558,
         "status": "ok"
       },
       {
-        "name": "stopforumspam/toxic_domains",
-        "url": "https://www.stopforumspam.com/downloads/toxic_domains_whole.txt",
-        "raw_count": 87146,
+        "name": "doodad-labs/disposable-email-domains",
+        "url": "https://raw.githubusercontent.com/doodad-labs/disposable-email-domains/main/data/domains.txt",
+        "raw_count": 291846,
         "status": "ok"
       },
       {
         "name": "DeviceAndBrowserInfo/disposable-email-api",
         "url": "https://deviceandbrowserinfo.com/api/emails/disposable",
-        "raw_count": 50659,
+        "raw_count": 50660,
         "status": "ok"
       }
     ]
@@ -20890,6 +20890,7 @@
     "8b8bt3i4lg.mailbo.store",
     "8b9nwbwu.jebew.my.id",
     "8ba7yw9f.meinakana.shop",
+    "8ballengine.com",
     "8ballroulette.com",
     "8bb74m4e.zoom123.me",
     "8bciyq7zd6.mailbo.store",
@@ -32978,6 +32979,7 @@
     "ambaththoor.com",
     "amber-frog.com",
     "amber-linen5.com",
+    "ambercup.uk",
     "amberfield.icu",
     "amberfieldgroup.com",
     "amberfly.maskmy.id",
@@ -40718,6 +40720,7 @@
     "avvisassi.ml",
     "avvlrnw.shop",
     "avvmail.com",
+    "avvmfxrc.web.id",
     "avvqpeikqt.mailbo.store",
     "avvraedu.online",
     "avw3o3ctx8.mailbo.store",
@@ -54769,6 +54772,7 @@
     "br88bet.app",
     "br88helps.com",
     "br88thailand.com",
+    "br8cassinobet.com",
     "br9j.tieumuoishop.io.vn",
     "braaapcross.com",
     "braamresearch.com",
@@ -55946,6 +55950,7 @@
     "brxkf.anonbox.net",
     "brxqoy.cf",
     "brxwowpluq.mailbo.store",
+    "brxx.pranz233.biz.id",
     "bryanguzman.net",
     "bryanhoang.simplelogin.com",
     "bryanl1212.mozmail.com",
@@ -75199,6 +75204,7 @@
     "cuki.autokey247.com",
     "cuki.dudscc.com",
     "cuki.dudscuapcut.store",
+    "cukmfjpr.my.id",
     "cukofhvleu.mailbo.store",
     "cukpedia.com",
     "cukurovailan.xyz",
@@ -84859,6 +84865,7 @@
     "dnmb.yomail.info",
     "dnmh.spymail.one",
     "dnmrbughunter.com",
+    "dnmx.cc",
     "dnn.10mail.org",
     "dnn6ivnx.badut.cloud",
     "dnnaaqh0za.mailbo.store",
@@ -96551,6 +96558,7 @@
     "equiemail.com",
     "equifirst.in",
     "equilabnegocios.com",
+    "equilibrium.cfd",
     "equilibriumfusion.com",
     "equilibriumtotalbalance.com",
     "equility.info",
@@ -121939,6 +121947,7 @@
     "gupjfklm92.mailbo.store",
     "gupob.com",
     "gupron.site",
+    "gupta.lat",
     "guqage.ru",
     "guqoafm2ij.mailbo.store",
     "guqoo.com",
@@ -159129,6 +159138,7 @@
     "lakewater.org",
     "lakewinds.com",
     "lakewoodnewsdaily.com",
+    "lakeworkshop.net",
     "lakeworthfarming.co.uk",
     "lakexbetpinup.ru",
     "lakfcqihef.mailbo.store",
@@ -163165,6 +163175,7 @@
     "limang.ru",
     "limanow.com",
     "limaquebec.webmailious.top",
+    "limas.lat",
     "limashumk.shop",
     "limatyr.ru",
     "limavady.net",
@@ -165928,6 +165939,7 @@
     "longmonkey.info",
     "longmontpooltablerepair.com",
     "longmusic.com",
+    "longochem.com",
     "longrin1.com",
     "longsancu.com",
     "longsbkt.xyz",
@@ -167868,6 +167880,7 @@
     "lumusdigital.com.br",
     "lumyrix.cfd",
     "lumzb89kmi.mailbo.store",
+    "lumzi235.biz.id",
     "lun8nds96i.mailbo.store",
     "lun9.dung2tb.io.vn",
     "luna.sx",
@@ -169755,6 +169768,7 @@
     "madstack.com",
     "madtoppings.com",
     "madueno.freeinvestoradvice.com",
+    "madupot.com",
     "maduracrypto.web.id",
     "madurahoki.com",
     "maduras.blog",
@@ -178902,6 +178916,7 @@
     "meetday.my.id",
     "meetfellini.com",
     "meetflip.click",
+    "meetgiants.com",
     "meethelp.sbs",
     "meethelps.click",
     "meethelps.site",
@@ -195528,6 +195543,7 @@
     "nightfood.studio",
     "nightfunmore.online.ctu.edu.gr",
     "nightgirls.site",
+    "nightgrill.com",
     "nightmail.com",
     "nightmare.co.uk",
     "nightmedia.cf",
@@ -208262,6 +208278,7 @@
     "pagonpae.com",
     "pagons.org",
     "pagossnr.com",
+    "pagoya.lat",
     "pagr.dev",
     "pagroda.com",
     "pagudpudrinnovati.com",
@@ -215884,6 +215901,7 @@
     "pokr-str.ru",
     "pokr.com",
     "pokraska1.ru",
+    "pokrov.world",
     "pokrowcede.pl",
     "poks.p-e.kr",
     "poks66.icu",
@@ -217767,6 +217785,7 @@
     "pranobun.ml",
     "pranobun.tk",
     "pranto.me",
+    "pranz233.biz.id",
     "prapto.host",
     "pras.io",
     "prasannasafetynets.com",
@@ -218225,6 +218244,7 @@
     "preppingtoprep.com",
     "preppy.co.uk",
     "preppypurple.com",
+    "preprental.com",
     "preptoebon8887.a.lofteone.ru",
     "prepw.com",
     "prergerke2868.lofteone.ru",
@@ -224415,6 +224435,7 @@
     "qtj9rrs9pz.mailbo.store",
     "qtjl.aeronyx.cfd",
     "qtkaawihtk.mailbo.store",
+    "qtkv5.anonbox.net",
     "qtlbb.anonbox.net",
     "qtlhkpfx3bgdxan.cf",
     "qtlhkpfx3bgdxan.ga",
@@ -242854,6 +242875,7 @@
     "setia.biz",
     "setiabudihitz.com",
     "setiantang168.com",
+    "setiawanbridge.com",
     "setkardan12.club",
     "setki-optovik.ru",
     "setmail.store",
@@ -263674,6 +263696,7 @@
     "thechesschool.net",
     "thechichestercreativepartnership.org",
     "thechildrensfocus.com",
+    "thechiv.com",
     "theci.co",
     "thecinemanet.ru",
     "thecirchotelhollywood.com",
@@ -284713,6 +284736,7 @@
     "vna1ra.us",
     "vna2lklrlp.mailbo.store",
     "vna68.space",
+    "vnae866.com",
     "vnau8802.com",
     "vnbdktv2.ml",
     "vnbdktv2.tk",
@@ -285084,6 +285108,7 @@
     "volestream50.com",
     "volf7im03e.mailbo.store",
     "volgograd-nedv.ru",
+    "volhoo.com",
     "volitionomail.com",
     "volk.org",
     "volkemol.ru",
@@ -310231,6 +310256,7 @@
     "zuy.bixluro230.biz.id",
     "zuy.hufraki230.biz.id",
     "zuy.kavmre230.biz.id",
+    "zuy.lumzi235.biz.id",
     "zuy.mirexu230.biz.id",
     "zuy.qetaro230.biz.id",
     "zuy.wazri235.biz.id",
@@ -310376,6 +310402,7 @@
     "zwjaqtlnho.mailbo.store",
     "zwjmeeh1og.mailbo.store",
     "zwjmo2h8mc.mailbo.store",
+    "zwju.cukmfjpr.my.id",
     "zwkcyucajv.mailbo.store",
     "zwkrae0m.saucent.online",
     "zwljo0.moakt.co",
@@ -310583,6 +310610,7 @@
     "zxz.emlpro.com",
     "zxzconsulting.com",
     "zxzl.botexwya.my.id",
+    "zxzo.avvmfxrc.web.id",
     "zxzt.bjorwi.store",
     "zy.10mail.xyz",
     "zy.foodlpqse.com",
