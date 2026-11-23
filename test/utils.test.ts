@@ -11,6 +11,8 @@ import {
   parseCsvDomains,
   parseTldList,
   finalizeDomains,
+  sourceOrigin,
+  countOrigins,
 } from "../src/utils.js";
 import { ALLOWED_DOMAINS } from "../src/allowed-sources.js";
 import { DOMAIN_RE, MIN_TLD_COUNT } from "../src/constants.js";
@@ -35,6 +37,26 @@ describe("parseTldList", () => {
 
   it("returns null when com is missing", () => {
     assert.equal(parseTldList(ianaList([]).replace("\nCOM\n", "\n")), null);
+  });
+});
+
+describe("sourceOrigin", () => {
+  it("drops a trailing variant label", () => {
+    assert.equal(sourceOrigin("7c/fakefilter (JSON v2)"), "7c/fakefilter");
+    assert.equal(sourceOrigin("wesbos/burner-email-providers"), "wesbos/burner-email-providers");
+  });
+});
+
+describe("countOrigins", () => {
+  const src = (name: string, domains: string[]) => ({ source: { name }, domains });
+
+  it("counts each project once per domain, merging variants and repeats", () => {
+    const counts = countOrigins([
+      src("a/list", ["x.com", "x.com", "y.com"]),
+      src("a/list (MX)", ["x.com", "z.com"]),
+      src("b/list", ["x.com", "z.com"]),
+    ]);
+    assert.deepEqual(Object.fromEntries(counts), { "x.com": 2, "y.com": 1, "z.com": 2 });
   });
 });
 

@@ -1,5 +1,8 @@
 export const OUTPUT_FILE = "domains.json";
 export const OUTPUT_TXT_FILE = "domains.txt";
+export const STRICT_TXT_FILE = "domains-strict.txt";
+/** A domain is in the strict list when at least this many independent projects list it. */
+export const STRICT_MIN_SOURCES = 2;
 export const CHANGES_FILE = "CHANGES.md";
 export const README_FILE = "README.md";
 /** Number of runs kept in the change report. */

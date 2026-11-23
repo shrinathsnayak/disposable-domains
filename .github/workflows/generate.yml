@@ -49,7 +49,7 @@ jobs:
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add --force domains.json domains.txt README.md CHANGES.md
+          git add --force domains.json domains.txt domains-strict.txt README.md CHANGES.md
           # Only commit when generated outputs, README.md or CHANGES.md actually changed
           if git diff --cached --quiet; then
             echo "No changes to commit"

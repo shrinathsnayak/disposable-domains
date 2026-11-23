@@ -3,3 +3,4 @@ dist
 *.tsbuildinfo
 domains.json
 domains.txt
+domains-strict.txt

@@ -21,13 +21,29 @@ import {
   OUTPUT_TXT_FILE,
   README_FILE,
   README_PREVIEW_RUNS,
+  STRICT_MIN_SOURCES,
+  STRICT_TXT_FILE,
 } from "./constants";
 import logger from "./logger";
 import type { Source, SourceStat } from "./types";
-import { fetchSource, fetchText, finalizeDomains, parseTldList, runWithConcurrency } from "./utils";
+import {
+  countOrigins,
+  fetchSource,
+  fetchText,
+  finalizeDomains,
+  parseTldList,
+  runWithConcurrency,
+} from "./utils";
 
 interface Output {
-  meta: { generated_on: string; total: number; source_count: number; sources: SourceStat[] };
+  meta: {
+    generated_on: string;
+    total: number;
+    /** Domains in domains-strict.txt: listed by at least STRICT_MIN_SOURCES projects, or manually blocked. */
+    strict_total: number;
+    source_count: number;
+    sources: SourceStat[];
+  };
   domains: string[];
 }
 
@@ -85,12 +101,12 @@ async function main(): Promise<void> {
     text === null ? null : parseTldList(text),
   );
 
-  const allDomains = new Set<string>();
+  const results: Awaited<ReturnType<typeof fetchSource>>[] = [];
   const stats: SourceStat[] = [];
 
   await runWithConcurrency(BLOCKED_SOURCES as Source[], async (source) => {
     const result = await fetchSource(source);
-    for (const domain of result.domains) allDomains.add(domain);
+    results.push(result);
     stats.push({
       name: result.source.name,
       url: result.source.url,
@@ -99,12 +115,16 @@ async function main(): Promise<void> {
     });
   });
 
+  const originCounts = countOrigins(results);
+  const allDomains = new Set<string>(originCounts.keys());
+  const manualBlocked = new Set<string>();
   let manualBlockedValid = 0;
   let manualBlockedInvalid = 0;
   for (const raw of MANUAL_BLOCKED_DOMAINS) {
     const d = raw.trim().toLowerCase();
     if (DOMAIN_RE.test(d)) {
       allDomains.add(d);
+      manualBlocked.add(d);
       manualBlockedValid++;
     } else {
       manualBlockedInvalid++;
@@ -133,6 +153,11 @@ async function main(): Promise<void> {
     logger.info(`Removed ${unknownTldCount.toLocaleString()} domains with unknown TLDs`);
   }
 
+  // Manually blocked domains are maintainer-reviewed, so they need no second source.
+  const strict = sorted.filter(
+    (d) => manualBlocked.has(d) || (originCounts.get(d) ?? 0) >= STRICT_MIN_SOURCES,
+  );
+
   const previousText = await readOptional(OUTPUT_FILE);
   const previous = previousText === null ? null : (JSON.parse(previousText) as Output);
 
@@ -140,6 +165,7 @@ async function main(): Promise<void> {
     meta: {
       generated_on: new Date().toISOString(),
       total: sorted.length,
+      strict_total: strict.length,
       source_count: BLOCKED_SOURCES.length,
       sources: stats,
     },
@@ -161,9 +187,13 @@ async function main(): Promise<void> {
 
   await writeFile(OUTPUT_FILE, JSON.stringify(output, null, 2) + "\n", "utf8");
   await writeFile(OUTPUT_TXT_FILE, sorted.join("\n") + "\n", "utf8");
+  await writeFile(STRICT_TXT_FILE, strict.join("\n") + "\n", "utf8");
   await updateChangeReport(previous, output);
   logger.info(
     `✓ Written ${OUTPUT_FILE} and ${OUTPUT_TXT_FILE} - ${sorted.length.toLocaleString()} unique domains from ${BLOCKED_SOURCES.length} sources.`,
+  );
+  logger.info(
+    `✓ Written ${STRICT_TXT_FILE} - ${strict.length.toLocaleString()} domains listed by ${STRICT_MIN_SOURCES}+ projects`,
   );
   logger.info(`Time taken: ${((Date.now() - startTime) / 1000).toFixed(2)} seconds`);
   logger.info(`Generated at: ${new Date().toISOString()}`);

@@ -79,6 +79,16 @@ def is_disposable(email: str) -> bool:
     return len(parts) == 2 and parts[1] in blocked
 ```
 
+### 🎯 Strict list (fewer false positives)
+
+The full list includes every domain that **any** source flags, so one mistaken upstream can block a real provider. If wrongly blocking a signup costs you more than letting a throwaway address through, use the strict list. It keeps only domains that at least **two different projects** list, plus the manually blocked ones:
+
+```
+https://cdn.jsdelivr.net/gh/shrinathsnayak/disposable-domains/domains-strict.txt
+```
+
+It is plain text, one domain per line, so it drops into the snippets above as `new Set(text.trim().split("\n"))`. Variants of one project, such as `7c/fakefilter` and `7c/fakefilter (JSON v2)`, count as one source. Many upstream lists copy from each other, so two sources agreeing means the domain is less likely to be a one-off mistake, not that it was checked independently.
+
 ### 🔍 Inspect metadata with curl
 
 ```bash
@@ -97,6 +107,7 @@ curl -s https://cdn.jsdelivr.net/gh/shrinathsnayak/disposable-domains/domains.js
   "meta": {
     "generated_on": "2026-04-10T02:00:00.000Z",
     "total": 196394,
+    "strict_total": 169842,
     "source_count": 31,
     "sources": [
       {
@@ -111,7 +122,9 @@ curl -s https://cdn.jsdelivr.net/gh/shrinathsnayak/disposable-domains/domains.js
 }
 ```
 
-The `meta.sources` array records the per-source domain count and fetch status, making it easy to spot a broken upstream at a glance.
+The `meta.sources` array records the per-source domain count and fetch status, making it easy to spot a broken upstream at a glance. `meta.strict_total` is the size of `domains-strict.txt`.
+
+`domains.txt` holds the same domains as `domains.json`, one per line. `domains-strict.txt` is the [strict list](#-strict-list-fewer-false-positives) in the same format.
 
 ---
 
@@ -120,12 +133,12 @@ The `meta.sources` array records the per-source domain count and fetch status, m
 Every day at **02:00 UTC**, the GitHub Actions workflow:
 
 1. Fetches all 34 upstream blocklists **concurrently** (capped at 8 in-flight to avoid rate-limiting)
-2. Merges domains into a `Set` as each source resolves - no waiting for the full batch
+2. Merges the domains and counts, for each one, how many different projects list it (variants of one project count once)
 3. Merges any entries from `MANUAL_BLOCKED_DOMAINS` in [`blocked-sources.ts`](src/blocked-sources.ts) (trimmed, lowercased; invalid hostnames are skipped)
 4. Filters out legitimate providers via `ALLOWED_DOMAINS` and optional allowlist sources (`ALLOWLIST_SOURCES` in [`allowed-sources.ts`](src/allowed-sources.ts)) - same `name` / `url` / `format` shape as blocklists. `ALLOWED_DOMAINS` ships with ~150 major webmail providers and ISPs (Gmail, Outlook, iCloud, Proton, GMX, Mail.ru, QQ, Comcast, …) that some upstream lists mislabel as disposable
 5. Drops domains whose TLD is not in the [IANA root zone](https://data.iana.org/TLD/tlds-alpha-by-domain.txt) (typos like `gmail.con`, IP addresses, scraped junk). If the IANA list can't be fetched, this step is skipped rather than failing the run
 6. Refuses to publish if the run looks like a broken or poisoned upstream: the total drops by more than 5%, or a single source grows by more than 50% (and at least 1,000 domains) since the previous run. The job fails and nothing is written; after reviewing, re-run it from the Actions tab with **allow_large_changes** checked (or set `ALLOW_LARGE_CHANGES=1` locally)
-7. Writes a single sorted `domains.json` with full source stats
+7. Writes a single sorted `domains.json` with full source stats, the same list as `domains.txt`, and `domains-strict.txt` with only the domains that two or more projects list (plus manual blocks)
 8. Compares the result with the previous run and, if anything changed, adds an entry to [`CHANGES.md`](CHANGES.md) (how many domains were added and removed; last 30 runs kept) and refreshes the **Latest changes** preview above
 9. Commits the result **only if the content actually changed**
 
@@ -201,7 +214,9 @@ You can also trigger a manual run any time from the Actions tab via `workflow_di
 | `csv`                | CSV with a header row; set `csv_domain_column` to the domain column name (default `domain`)       |
 | `json_fakefilter_v2` | [7c/fakefilter](https://github.com/7c/fakefilter) `data_version2.json` (`domains` + `hosts` keys) |
 
-3. Run `npm run generate` locally to confirm the source resolves correctly, then open a PR.
+3. If the new feed is another variant of a project that is already listed, give it the same name with a suffix in parentheses, such as `"owner/repo (MX-verified)"`. The strict list treats names that differ only by that suffix as one source, so a project can't confirm its own domains.
+
+4. Run `npm run generate` locally to confirm the source resolves correctly, then open a PR.
 
 ### ✅ Whitelisting a domain
 
@@ -250,6 +265,8 @@ disposable-domains/
 │   ├── generate.yml         daily cron - regenerates and commits domains.json
 │   └── test.yml             runs on every PR
 ├── domains.json
+├── domains.txt              same list, one domain per line
+├── domains-strict.txt       domains listed by 2+ projects
 ├── CHANGES.md               daily change report (generated)
 └── README.md
 ```

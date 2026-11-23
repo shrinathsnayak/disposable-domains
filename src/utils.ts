@@ -368,6 +368,35 @@ export function parseTldList(text: string): Set<string> | null {
 }
 
 /**
+ * The project a source comes from: its name without a trailing `(variant)`, so
+ * `7c/fakefilter` and `7c/fakefilter (JSON v2)` are the same project.
+ */
+export function sourceOrigin(name: string): string {
+  return name.replace(/\s*\([^()]*\)$/, "");
+}
+
+/**
+ * For each domain, how many different projects list it. Variants of one project
+ * (see {@link sourceOrigin}) and repeats within a list count once.
+ */
+export function countOrigins(
+  results: Iterable<{ source: { name: string }; domains: Iterable<string> }>,
+): Map<string, number> {
+  const byOrigin = new Map<string, Set<string>>();
+  for (const { source, domains } of results) {
+    const origin = sourceOrigin(source.name);
+    const set = byOrigin.get(origin) ?? new Set<string>();
+    for (const domain of domains) set.add(domain);
+    byOrigin.set(origin, set);
+  }
+  const counts = new Map<string, number>();
+  for (const set of byOrigin.values()) {
+    for (const domain of set) counts.set(domain, (counts.get(domain) ?? 0) + 1);
+  }
+  return counts;
+}
+
+/**
  * Produces the final sorted blocklist: removes allowlisted domains and, when
  * `tlds` is given, domains whose TLD is not in the root zone.
  */
