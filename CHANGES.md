@@ -2,6 +2,11 @@
 
 What changed in the blocklist on each run, newest first. Only runs that changed the list are recorded, and the last 30 are kept; older changes, and the exact domains added or removed, are in the git history of `domains.txt`.
 
+<!-- entry {"date":"2026-11-27 10:36 UTC","added":29,"removed":4,"total":323027} -->
+## 2026-11-27 10:36 UTC
+
+**+29 added · −4 removed** · 323,027 total
+
 <!-- entry {"date":"2026-11-26 10:32 UTC","added":42,"removed":0,"total":323002} -->
 ## 2026-11-26 10:32 UTC
 
