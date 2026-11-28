@@ -15,10 +15,10 @@
 <!-- STATS_START -->
 | Metric | Value |
 |--------|-------|
-| Disposable Domains | 323,027 |
-| Strict list (2+ sources) | 279,567 |
+| Disposable Domains | 323,077 |
+| Strict list (2+ sources) | 279,627 |
 | Sources | 45 |
-| Generated on | Fri, 27 Nov 2026 10:36:24 GMT |
+| Generated on | Sat, 28 Nov 2026 09:53:34 GMT |
 <!-- STATS_END -->
 
 ---
@@ -28,13 +28,13 @@
 <!-- CHANGES_START -->
 | Run | Added | Removed | Total |
 | --- | ---: | ---: | ---: |
+| 2026-11-28 09:53 UTC | +50 | 0 | 323,077 |
 | 2026-11-27 10:36 UTC | +29 | −4 | 323,027 |
 | 2026-11-26 10:32 UTC | +42 | 0 | 323,002 |
 | 2026-11-25 10:56 UTC | +30 | 0 | 322,960 |
 | 2026-11-24 12:05 UTC | +35 | −1 | 322,930 |
 | 2026-11-23 20:22 UTC | +21 | 0 | 322,896 |
 | 2026-11-23 19:41 UTC | +2 | 0 | 322,875 |
-| 2026-11-23 19:06 UTC | +12,282 | −156 | 322,873 |
 
 [See the full change report →](CHANGES.md)
 <!-- CHANGES_END -->
